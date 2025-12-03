@@ -1,0 +1,624 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<style>
+  body {
+    font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+    min-height: 100vh;
+  }
+
+  .image-placeholder img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .main-image {
+    height: 530px;
+    object-fit: cover;
+  }
+
+  .side-image {
+    height: 256px;
+    object-fit: cover;
+  }
+
+  .back-link {
+    color: #b94a3a;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .back-link:hover {
+    color: #6c2e22;
+    text-decoration: none;
+    transform: translateY(-2px);
+  }
+
+  .location-text {
+    color: #8c7c6b;
+    font-size: 0.95rem;
+  }
+
+  .btn-outline-danger {
+    border-color: #b94a3a;
+    color: #b94a3a;
+    background: linear-gradient(135deg, #e2b07b 0%, #f3c892 100%);
+    border-radius: 25px;
+    font-weight: 600;
+    padding: 8px 20px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-outline-danger:hover {
+    background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+    border-color: #b94a3a;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(185,74,58,0.15);
+  }
+
+  .site-detail-container {
+    padding: 20px 0;
+  }
+
+  .site-card {
+    background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+    border-radius: 25px;
+    box-shadow: 0 8px 30px rgba(185,74,58,0.08);
+    padding: 60px;
+    margin: 20px auto;
+    max-width: 1200px;
+    border: 1px solid #ece6df;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .site-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><g fill="%23e2b07b" fill-opacity="0.03"><circle cx="3" cy="3" r="1"/><circle cx="13" cy="13" r="1"/></g></svg>');
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .site-card > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  .site-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #6c2e22;
+    text-align: center;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(108,46,34,0.1);
+    position: relative;
+    padding-bottom: 20px;
+  }
+
+  .site-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(135deg, #b94a3a 0%, #e2b07b 100%);
+    border-radius: 2px;
+  }
+
+  .tab-navigation {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+    background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+    border-radius: 15px;
+    padding: 10px;
+    border: 1px solid #e2b07b;
+  }
+
+  .tab-btn {
+    background: transparent;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: 600;
+    color: #6c2e22;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    margin: 0 5px;
+    font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .tab-btn:hover {
+    background: linear-gradient(135deg, #e2b07b 0%, #f3c892 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(185,74,58,0.1);
+  }
+
+  .tab-btn.active {
+    background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+    color: white;
+    box-shadow: 0 6px 20px rgba(185,74,58,0.2);
+    transform: translateY(-2px);
+  }
+
+  .tab-content {
+    display: none;
+    animation: fadeIn 0.5s ease-in-out;
+    background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+    border-radius: 20px;
+    padding: 30px;
+    border-left: 5px solid #b94a3a;
+    box-shadow: 0 6px 20px rgba(185,74,58,0.08);
+    margin-top: 20px;
+    border: 1px solid #ece6df;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tab-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><g fill="%23e2b07b" fill-opacity="0.02"><circle cx="3" cy="3" r="1"/><circle cx="13" cy="13" r="1"/></g></svg>');
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .tab-content > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  .tab-content.active-tab {
+    display: block;
+  }
+
+  .tab-content h3 {
+    color: #6c2e22;
+    font-weight: 600;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e2b07b;
+    padding-bottom: 10px;
+  }
+
+  .tab-content p {
+    color: #3d2c22;
+    line-height: 1.8;
+    font-size: 1.1rem;
+    text-align: justify;
+    font-weight: 500;
+  }
+
+  .tab-icon {
+    font-size: 1.5rem;
+    color: #e2b07b;
+    margin-right: 10px;
+    filter: drop-shadow(0 2px 4px rgba(185,74,58,0.15));
+  }
+
+  /* Enhanced Card Styling */
+  .card {
+    background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+    border: 2px solid #e2b07b;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(185,74,58,0.08);
+    overflow: hidden;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #b94a3a, #e2b07b);
+    border-radius: 20px 20px 0 0;
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 35px rgba(185,74,58,0.15);
+    border-color: #b94a3a;
+  }
+
+  .card-img-top {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    border-radius: 18px 18px 0 0;
+  }
+
+  .card:hover .card-img-top {
+    transform: scale(1.05);
+  }
+
+  .card-body {
+    padding: 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .card-title {
+    color: #6c2e22;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    text-shadow: 1px 1px 2px rgba(108,46,34,0.05);
+  }
+
+  .card-text {
+    color: #3d2c22;
+    line-height: 1.6;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .card-body a {
+    color: #b94a3a;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, #e2b07b 0%, #f3c892 100%);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    box-shadow: 0 2px 8px rgba(185,74,58,0.1);
+  }
+
+  .card-body a:hover {
+    background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(185,74,58,0.2);
+  }
+
+  /* Grid Layout Enhancement */
+  .row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin: 0;
+  }
+
+  .col-md-4,
+  .col-4 {
+    width: auto;
+    padding: 0;
+  }
+
+  /* Guidance Tips Cards */
+  .guidance-tips .card {
+    background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .guidance-tips .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+  }
+
+  .guidance-tips .card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .guidance-tips .card-title i {
+    color: #b94a3a;
+    font-size: 1.5rem;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    body {
+      padding-top: 100px;
+    }
+
+    .site-card {
+      padding: 40px;
+      margin: 15px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    body {
+      padding-top: 90px;
+    }
+
+    .site-card {
+      padding: 30px 20px;
+    }
+
+    .site-title {
+      font-size: 2rem;
+    }
+
+    .tab-btn {
+      width: 100%;
+      text-align: center;
+      margin: 4px 0;
+      padding: 10px 20px;
+    }
+
+    .tab-content {
+      padding: 20px 15px;
+    }
+
+    .tab-content h3 {
+      font-size: 1.4rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .row {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      margin-bottom: 15px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    body {
+      padding-top: 80px;
+    }
+
+    .site-card {
+      padding: 20px 15px;
+      margin: 10px;
+    }
+
+    .site-title {
+      font-size: 1.8rem;
+    }
+
+    .tab-navigation {
+      padding: 8px;
+    }
+
+    .tab-btn {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+    }
+
+    .tab-content {
+      padding: 15px;
+    }
+
+    .card-body {
+      padding: 15px;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+    }
+  }
+</style>
+
+<div class="site-detail-container">
+  <div class="container">
+    <div class="site-card">
+      <h1 class="site-title">Tourism Services</h1>
+      <div class="tab-navigation">
+        <button
+          class="tab-links tab-btn active"
+          onclick="openLink('transportation')"
+        >
+          Transportation
+        </button>
+        <button class="tab-links tab-btn" onclick="openLink('accomodation')">
+          Accomodation
+        </button>
+        <button class="tab-links tab-btn" onclick="openLink('tourguides')">
+          Tour Guides
+        </button>
+      </div>
+
+      <div id="transportation" class="tab-content active-tab">
+        <h3>
+          <span>Transportation</span>
+        </h3>
+        <div class="row">
+          {% for transport in transportation %}
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <img
+                src="{{ transport.photo.url }}"
+                class="card-img-top"
+                alt="{{ transport.name }}"
+              />
+              <div class="card-body">
+                <h5 class="card-title">{{ transport.name }}</h5>
+                <p class="card-text">{{ transport.description }}</p>
+                <p class="card-text">{{ transport.phone }}</p>
+                <a
+                  href="{{ transport.link }}"
+                  target="_blank"
+                  style="text-decoration: none"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  Visit Website
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div id="accomodation" class="tab-content">
+        <h3>
+          <span>Accomodation</span>
+        </h3>
+        <div class="row">
+          {% for a in accomodation %}
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <img
+                src="{{ a.photo.url }}"
+                class="card-img-top"
+                alt="{{ a.name }}"
+              />
+              <div class="card-body">
+                <h5 class="card-title">{{ a.name }}</h5>
+                <p class="card-text">{{ a.description }}</p>
+                <p class="card-text">{{ a.phone }}</p>
+                <a
+                  href="{{ a.link }}"
+                  target="_blank"
+                  style="text-decoration: none"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  Visit Website
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div id="tourguides" class="tab-content">
+        <h3>
+          <span>Tour Guides</span>
+        </h3>
+        <div class="row">
+          {% for tourguide in tourguides %}
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <img
+                src="{{ tourguide.photo.url }}"
+                class="card-img-top"
+                alt="{{ tourguide.name }}"
+              />
+              <div class="card-body">
+                <h5 class="card-title">{{ tourguide.name }}</h5>
+                <p class="card-text">{{ tourguide.description }}</p>
+                <p class="card-text">{{ tourguide.phone }}</p>
+                <a
+                  href="{{ tourguide.link }}"
+                  target="_blank"
+                  style="text-decoration: none"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  Visit Website
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="site-detail-container">
+  <div class="container">
+    <div class="site-card guidance-tips">
+      <h1 class="site-title">Guidance Tips</h1>
+      <div class="row">
+        <div class="col-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="fa-solid fa-certificate"></i> Best Things to Do
+              </h5>
+              <p class="card-text">
+                Exploring Bhaktapur Durbar Square, visiting the Nyatapola
+                Temple, and experiencing Pottery Square.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="fa-solid fa-calendar-days"></i> Best Time to Visit
+              </h5>
+              <p class="card-text">
+                Spring (March to May) and autumn (September to November) months.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="fa-solid fa-money-bill-wave"></i> Tour Costs
+              </h5>
+              <p class="card-text">
+                Around NPR 6,000–8,000 (USD 45–60) for a day.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let tabcontents = document.getElementsByClassName("tab-content");
+  let tablinks = document.getElementsByClassName("tab-links");
+  function openLink(arg) {
+    for (let tabcontent of tabcontents) {
+      tabcontent.classList.remove("active-tab");
+    }
+    for (let tablink of tablinks) {
+      tablink.classList.remove("active");
+    }
+    document.getElementById(arg).classList.add("active-tab");
+    event.currentTarget.classList.add("active");
+  }
+</script>
+{% endblock content %}

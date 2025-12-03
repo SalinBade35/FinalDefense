@@ -1,0 +1,700 @@
+<!-- this is main/weather.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    .weather-container {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+        min-height: 100vh;
+        padding: 40px 0 40px 0;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .weather-container .main-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    .weather-container .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        color: #6c2e22;
+    }
+
+    .weather-container .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(108,46,34,0.1);
+        position: relative;
+        padding-bottom: 20px;
+    }
+
+    .weather-container .page-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(135deg, #b94a3a 0%, #e2b07b 100%);
+        border-radius: 2px;
+    }
+
+    .weather-container .page-subtitle {
+        font-size: 1.1rem;
+        color: #8c7c6b;
+        font-weight: 500;
+    }
+
+    .weather-container .search-section {
+        background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+        backdrop-filter: blur(10px);
+        border-radius: 25px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 30px rgba(185,74,58,0.08);
+        border: 1px solid #ece6df;
+        position: relative;
+        overflow: visible; /* Ensure dropdown is not clipped */
+        z-index: 20; /* Above weather-card */
+    }
+
+    .weather-container .search-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><g fill="%23e2b07b" fill-opacity="0.03"><circle cx="3" cy="3" r="1"/><circle cx="13" cy="13" r="1"/></g></svg>');
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .weather-container .search-section > * {
+        position: relative;
+        z-index: 2;
+    }
+
+    .weather-container .search-form {
+        position: relative;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .weather-container .search-input-group {
+        position: relative;
+        z-index: 30; /* Higher than search-section */
+    }
+
+    .weather-container .search-input {
+        border: 2px solid #e2b07b;
+        border-radius: 15px;
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        width: 100%;
+        transition: all 0.3s ease;
+        background: #fff;
+        box-sizing: border-box;
+        color: #3d2c22;
+    }
+
+    .weather-container .search-input:focus {
+        border-color: #b94a3a;
+        box-shadow: 0 0 0 0.2rem rgba(185,74,58,0.25);
+        outline: none;
+    }
+
+    .weather-container .search-btn {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        color: white;
+        font-weight: 600;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(185,74,58,0.15);
+    }
+
+    .weather-container .search-btn:hover {
+        background: linear-gradient(135deg, #b45309 0%, #e2b07b 100%);
+        transform: translateY(-50%) translateY(-2px);
+        box-shadow: 0 6px 20px rgba(185,74,58,0.25);
+    }
+
+    .weather-container .autocomplete-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 2px solid #e2b07b;
+        border-radius: 12px;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 40; /* Highest so it appears above everything */
+        box-shadow: 0 8px 25px rgba(185,74,58,0.15);
+        margin-top: 4px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .weather-container .autocomplete-dropdown div {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        border-bottom: 1px solid #ece6df;
+        color: #3d2c22;
+    }
+
+    .weather-container .autocomplete-dropdown div:last-child {
+        border-bottom: none;
+    }
+
+    .weather-container .autocomplete-dropdown div:hover {
+        background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+        color: #6c2e22;
+    }
+
+    .weather-container .weather-card {
+        background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+        backdrop-filter: blur(10px);
+        border-radius: 25px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 30px rgba(185,74,58,0.08);
+        border: 1px solid #ece6df;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        z-index: 10; /* Lower than search-section and dropdown */
+    }
+
+    .weather-container .weather-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><g fill="%23e2b07b" fill-opacity="0.03"><circle cx="3" cy="3" r="1"/><circle cx="13" cy="13" r="1"/></g></svg>');
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .weather-container .weather-card > * {
+        position: relative;
+        z-index: 2;
+    }
+
+    .weather-container .weather-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(185,74,58,0.15);
+    }
+
+    .weather-container .current-weather {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .weather-container .location-info {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .weather-container .location-name {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #6c2e22;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .weather-container .location-info i {
+        color: #b94a3a !important;
+    }
+
+    .weather-container .weather-main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .weather-container .weather-icon-large {
+        width: 100px;
+        height: 100px;
+        filter: drop-shadow(0 4px 8px rgba(185,74,58,0.1));
+    }
+
+    .weather-container .temperature-display {
+        text-align: center;
+    }
+
+    .weather-container .temperature-main {
+        font-size: 4rem;
+        font-weight: 700;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #b94a3a 0%, #e2b07b 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+
+    .weather-container .weather-description {
+        font-size: 1.3rem;
+        color: #8c7c6b;
+        text-transform: capitalize;
+        font-weight: 500;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .weather-container .weather-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .weather-container .detail-card {
+        background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        border: 2px solid #e2b07b;
+        transition: all 0.3s ease;
+    }
+
+    .weather-container .detail-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(185,74,58,0.1);
+        border-color: #b94a3a;
+    }
+
+    .weather-container .detail-icon {
+        font-size: 1.5rem;
+        color: #b94a3a;
+        margin-bottom: 0.5rem;
+    }
+
+    .weather-container .detail-label {
+        font-size: 0.9rem;
+        color: #8c7c6b;
+        margin-bottom: 0.3rem;
+        font-weight: 500;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .weather-container .detail-value {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #6c2e22;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .weather-container .forecast-section {
+        margin-top: 2rem;
+    }
+
+    .weather-container .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #6c2e22;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .weather-container .section-title i {
+        color: #e2b07b;
+    }
+
+    .weather-container .forecast-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .weather-container .forecast-card {
+        background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        border: 2px solid #e2b07b;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .weather-container .forecast-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #b94a3a, #e2b07b);
+        border-radius: 16px 16px 0 0;
+    }
+
+    .weather-container .forecast-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(185,74,58,0.1);
+        border-color: #b94a3a;
+    }
+
+    .weather-container .forecast-date {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #6c2e22;
+        margin-bottom: 1rem;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .weather-container .forecast-icon {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 0.5rem;
+        filter: drop-shadow(0 2px 4px rgba(185,74,58,0.1));
+    }
+
+    .weather-container .forecast-temp {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #b94a3a;
+        margin-bottom: 0.5rem;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .weather-container .forecast-desc {
+        font-size: 0.9rem;
+        color: #8c7c6b;
+        text-transform: capitalize;
+        margin-bottom: 1rem;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .weather-container .forecast-details {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: #8c7c6b;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .weather-container .forecast-details i {
+        color: #b94a3a;
+        margin-right: 3px;
+    }
+
+    .weather-container .no-data {
+        text-align: center;
+        padding: 3rem;
+        color: #8c7c6b;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .weather-container .no-data i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #e2b07b;
+        opacity: 0.7;
+    }
+
+    .weather-container .no-data h4 {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #6c2e22;
+    }
+
+    .weather-container .no-data p {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: #8c7c6b;
+    }
+
+    @media (max-width: 1024px) {
+        .weather-container {
+            padding-top: 120px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .weather-container {
+            padding-top: 110px;
+        }
+
+        .weather-container .page-title {
+            font-size: 2rem;
+        }
+        
+        .weather-container .weather-main {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .weather-container .temperature-main {
+            font-size: 3rem;
+        }
+        
+        .weather-container .weather-details {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .weather-container .forecast-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .weather-container .weather-card {
+            padding: 2rem 1.5rem;
+        }
+
+        .weather-container .search-section {
+            padding: 1.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .weather-container {
+            padding-top: 100px;
+        }
+
+        .weather-container .main-container {
+            padding: 0 0.5rem;
+        }
+
+        .weather-container .weather-card {
+            padding: 1.5rem 1rem;
+        }
+
+        .weather-container .page-title {
+            font-size: 1.8rem;
+        }
+
+        .weather-container .temperature-main {
+            font-size: 2.5rem;
+        }
+    }
+</style>
+
+<!-- Wrap all weather content in a container to scope the styles -->
+<div class="weather-container">
+    <div class="main-container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-cloud-sun"></i> Weather Dashboard
+            </h1>
+            <p class="page-subtitle">Get accurate weather forecasts for any location worldwide</p>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <form class="search-form" method="get" autocomplete="off">
+                <div class="search-input-group">
+                    <input class="search-input" type="text" name="city" placeholder="Search for a city..." value="{{ city }}">
+                    <input type="hidden" name="country" class="country-input" value="{{ country }}">
+                    <button class="search-btn" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Current Weather -->
+        {% if weather %}
+        <div class="weather-card">
+            <div class="current-weather">
+                <div class="location-info">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h2 class="location-name">{{ weather.city }}</h2>
+                </div>
+                
+                <div class="weather-main">
+                    <img src="{{ weather.icon_url }}" alt="Weather icon" class="weather-icon-large">
+                    <div class="temperature-display">
+                        <div class="temperature-main">{{ weather.temperature }}°C</div>
+                        <div class="weather-description">{{ weather.description }}</div>
+                    </div>
+                </div>
+                
+                <div class="weather-details">
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                        <div class="detail-label">Humidity</div>
+                        <div class="detail-value">{{ weather.humidity }}%</div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <i class="fas fa-wind"></i>
+                        </div>
+                        <div class="detail-label">Wind Speed</div>
+                        <div class="detail-value">{{ weather.wind }} m/s</div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="detail-label">Visibility</div>
+                        <div class="detail-value">10 km</div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="detail-icon">
+                            <i class="fas fa-thermometer-half"></i>
+                        </div>
+                        <div class="detail-label">Feels Like</div>
+                        <div class="detail-value">{{ weather.temperature|add:"2" }}°C</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- 5-Day Forecast -->
+        {% if forecast %}
+        <div class="weather-card">
+            <div class="forecast-section">
+                <h3 class="section-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    5-Day Forecast for {{ city|title }}
+                </h3>
+                
+                <div class="forecast-grid">
+                    {% for day in forecast %}
+                    <div class="forecast-card">
+                        <div class="forecast-date">{{ day.date }}</div>
+                        <img src="{{ day.icon_url }}" alt="Weather icon" class="forecast-icon">
+                        <div class="forecast-temp">{{ day.avg_temp }}°C</div>
+                        <div class="forecast-desc">{{ day.description }}</div>
+                        <div class="forecast-details">
+                            <span><i class="fas fa-tint"></i> {{ day.humidity }}%</span>
+                            <span><i class="fas fa-wind"></i> {{ day.wind }} m/s</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+            {% if city %}
+            <div class="weather-card">
+                <div class="no-data">
+                    <i class="fas fa-cloud-rain"></i>
+                    <h4>No Forecast Data Available</h4>
+                    <p>We couldn't find forecast data for "{{ city }}". Please try searching for another location.</p>
+                </div>
+            </div>
+            {% endif %}
+        {% endif %}
+
+        <!-- Welcome Message for First Visit -->
+        {% if not weather and not city %}
+        <div class="weather-card">
+            <div class="no-data">
+                <i class="fas fa-search-location"></i>
+                <h4>Welcome to Weather Dashboard</h4>
+                <p>Enter a city name above to get started with current weather and 5-day forecast.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Remove duplicate Bootstrap script - base.html already has it -->
+<script>
+    const apiKey = "46f4ca4a232d4de59ef8c6683055ce00";
+    const input = document.querySelector('.weather-container .search-input');
+    const countryInput = document.querySelector('.weather-container .country-input');
+    let dropdown;
+
+    input.addEventListener('input', function() {
+        const query = input.value;
+        if (query.length < 2) {
+            if (dropdown) dropdown.remove();
+            return;
+        }
+        
+        fetch(`https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(query)}&limit=5&apiKey=${apiKey}`)
+            .then(response => response.json())
+            .then(data => {
+                if (dropdown) dropdown.remove();
+                
+                if (data.features && data.features.length > 0) {
+                    dropdown = document.createElement('div');
+                    dropdown.className = 'autocomplete-dropdown';
+                    
+                    data.features.forEach(place => {
+                        const option = document.createElement('div');
+                        option.innerHTML = `
+                            <div style="font-weight: 500;">${place.properties.city || place.properties.name}</div>
+                            <div style="font-size: 0.8rem; color: #6c757d;">${place.properties.formatted}</div>
+                        `;
+                        
+                        option.addEventListener('mousedown', function(e) {
+                            e.preventDefault();
+                            input.value = place.properties.city || place.properties.name || place.properties.formatted;
+                            countryInput.value = place.properties.country_code ? place.properties.country_code.toUpperCase() : '';
+                            dropdown.remove();
+                        });
+                        
+                        dropdown.appendChild(option);
+                    });
+                    
+                    input.parentNode.appendChild(dropdown);
+                }
+            })
+            .catch(error => {
+                console.error('Autocomplete error:', error);
+            });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (dropdown && !input.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.remove();
+        }
+    });
+
+    // Form submission animation
+    document.querySelector('.weather-container .search-form').addEventListener('submit', function(e) {
+        const btn = document.querySelector('.weather-container .search-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+    });
+
+    // Smooth scroll for mobile
+    if (window.innerWidth <= 768) {
+        document.querySelector('.weather-container .search-form').addEventListener('submit', function() {
+            setTimeout(() => {
+                window.scrollTo({ top: 300, behavior: 'smooth' });
+            }, 100);
+        });
+    }
+</script>
+
+{% endblock %}

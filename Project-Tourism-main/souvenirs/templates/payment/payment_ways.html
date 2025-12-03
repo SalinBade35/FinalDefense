@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    body {
+        --terracotta-dark: #6c2e22;
+        --terracotta-mid: #b94a3a;
+        --terracotta-light: #e2b07b;
+        --terracotta-pale: #f5ede6;
+        --terracotta-card: #fffaf6;
+    }
+
+    .booking-card {
+        background: var(--terracotta-card);
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(108,46,34,0.10);
+        backdrop-filter: blur(10px);
+        max-width: 900px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .booking-header {
+        background: var(--terracotta-mid);
+        color: white;
+        padding: 30px;
+        text-align: center;
+        position: relative;
+    }
+
+    .booking-header::after {
+        content: '';
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-top: 20px solid var(--terracotta-mid);
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;
+    }
+
+    .price-tag {
+        background: var(--terracotta-light);
+        color: var(--terracotta-dark);
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 1.2em;
+        display: inline-block;
+        margin-top: 15px;
+        box-shadow: 0 4px 15px rgba(185,74,58,0.08);
+    }
+
+    .booking-details {
+        padding: 40px 30px;
+    }
+
+    .detail-row {
+        padding: 15px;
+        border-bottom: 1px solid rgba(108,46,34,0.08);
+        transition: all 0.3s ease;
+    }
+
+    .detail-row:hover {
+        background: var(--terracotta-pale);
+        transform: translateX(10px);
+    }
+
+    .detail-label {
+        color: var(--terracotta-mid);
+        font-weight: 600;
+    }
+
+    .btn-success {
+        background: var(--terracotta-mid);
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 30px;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(185,74,58,0.10);
+        margin: 5px 0;
+    }
+
+    .btn-success:hover {
+        background: var(--terracotta-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(108,46,34,0.18);
+    }
+
+    .btn-success:active {
+        transform: translateY(0);
+    }
+
+    .btn-cancel {
+        background: transparent;
+        color: var(--terracotta-mid);
+        border: 2px solid var(--terracotta-mid);
+        padding: 12px 24px;
+        font-size: 1.1em;
+        font-weight: 600;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: var(--terracotta-mid);
+        color: white;
+    }
+
+    .amenity-badge {
+        background: var(--terracotta-pale);
+        color: var(--terracotta-mid);
+        padding: 8px 15px;
+        border-radius: 15px;
+        margin: 5px;
+        display: inline-block;
+        border: 1px solid var(--terracotta-light);
+    }
+
+    .total-section {
+        background: var(--terracotta-pale);
+        padding: 20px;
+        border-radius: 15px;
+        margin-top: 20px;
+        border: 1px solid var(--terracotta-light);
+    }
+
+    .room-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 15px;
+        margin-bottom: 20px;
+    }
+
+    .highlight {
+        color: var(--terracotta-mid);
+        font-weight: 700;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="booking-card">
+        <div class="booking-header">
+            <h1><i class="fas fa-hotel me-3"></i>Select a Payment Method</h1>
+            <p class="mb-0">Please select a payment method and proceed</p>
+        </div>
+        
+        <div class="booking-details">
+            <div class="row">
+                
+            </div>
+            <div class="detail-row">
+                    <form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST">
+                        <input type="hidden" name="amount" value="{{ amount }}" required>
+                        <input type="hidden" name="tax_amount" value="{{ tax_amount }}" required>
+                        <input type="hidden" name="total_amount" value="{{ total_amount }}" required>
+                        <input type="hidden" name="transaction_uuid" value="{{ transaction_uuid }}" required>
+                        <input type="hidden" name="product_code" value="{{ product_code }}" required>
+                        <input type="hidden" id="product_service_charge" name="product_service_charge" value="0" required>
+                        <input type="hidden" id="product_delivery_charge" name="product_delivery_charge" value="0" required>
+                        <input type="hidden" id="product_service_charge" name="product_service_charge" value="0" required>
+                        <input type="hidden" id="product_delivery_charge" name="product_delivery_charge" value="0" required>
+                        <input type="hidden" name="success_url" value="{{ success_url }}" required>
+                        <input type="hidden" name="failure_url" value="{{ failure_url }}" required>
+                        <input type="hidden" name="signed_field_names" value="total_amount,transaction_uuid,product_code" required>
+                        <input type="hidden" name="signature" value="{{ signature }}" required>
+                        <button type="submit" class="btn-success">e-Sewa</button>
+                    </form>
+                    
+                  </div>
+                  <div class="detail-row">
+                    <a href="{% url 'index' %}" style="text-decoration: none;"> <button class="btn-success">Cash on arrival</button></a>
+                  </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}

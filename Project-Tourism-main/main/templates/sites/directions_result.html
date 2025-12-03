@@ -1,0 +1,557 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .directions-container {
+        padding: 40px 0;
+        background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+        min-height: 100vh;
+    }
+
+    .directions-card {
+        background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(185,74,58,0.08);
+        padding: 40px;
+        margin: 20px auto;
+        max-width: 1000px;
+        border: 1px solid #ece6df;
+        backdrop-filter: blur(10px);
+    }
+
+    .back-link {
+        color: #b94a3a;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 10px 20px;
+        background: #fffaf6;
+        border-radius: 25px;
+        border: 2px solid #e2b07b;
+        box-shadow: 0 2px 8px rgba(185,74,58,0.08);
+    }
+
+    .back-link:hover {
+        background: #b94a3a;
+        color: #fff;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(185,74,58,0.15);
+    }
+
+    .directions-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #6c2e22;
+        text-align: center;
+        margin-bottom: 30px;
+        text-shadow: 1px 1px 3px rgba(108,46,34,0.1);
+        position: relative;
+        padding-bottom: 20px;
+    }
+
+    .directions-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(135deg, #b94a3a 0%, #e2b07b 100%);
+        border-radius: 2px;
+    }
+
+    .route-summary {
+        background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(185,74,58,0.15);
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .route-info {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .info-item i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #f3c892;
+    }
+
+    .info-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+        color: #fff;
+    }
+
+    .info-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #f3c892;
+    }
+
+    .route-details {
+        background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+        border-radius: 15px;
+        padding: 30px;
+        border-left: 5px solid #b94a3a;
+        box-shadow: 0 4px 20px rgba(185,74,58,0.08);
+        margin-bottom: 30px;
+        border: 1px solid #ece6df;
+    }
+
+    .route-details h3 {
+        color: #6c2e22;
+        font-weight: 600;
+        margin-bottom: 20px;
+        font-size: 1.6rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 2px solid #ece6df;
+        padding-bottom: 15px;
+    }
+
+    .directions-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .direction-step {
+        display: flex;
+        align-items: flex-start;
+        padding: 15px 0;
+        border-bottom: 1px solid #ece6df;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+    }
+
+    .direction-step:last-child {
+        border-bottom: none;
+    }
+
+    .direction-step:hover {
+        background: linear-gradient(135deg, #f3c892 0%, #ece6df 100%);
+        padding-left: 15px;
+        padding-right: 15px;
+        transform: translateX(5px);
+        box-shadow: 0 2px 8px rgba(185,74,58,0.08);
+    }
+
+    .step-number {
+        background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+        color: white;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-right: 15px;
+        flex-shrink: 0;
+        font-size: 0.9rem;
+        box-shadow: 0 2px 8px rgba(185,74,58,0.15);
+        border: 2px solid #f3c892;
+    }
+
+    .step-text {
+        flex: 1;
+        color: #3d2c22;
+        line-height: 1.6;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .map-container {
+        height: 400px;
+        width: 100%;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(185,74,58,0.08);
+        margin-top: 20px;
+        border: 2px solid #ece6df;
+    }
+
+    .error-message {
+        background: linear-gradient(135deg, #f3c892 0%, #ece6df 100%);
+        border: 2px solid #e2b07b;
+        border-radius: 15px;
+        padding: 40px;
+        color: #6c2e22;
+        text-align: center;
+        margin: 20px 0;
+        box-shadow: 0 8px 20px rgba(185,74,58,0.08);
+    }
+
+    .error-message i {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        display: block;
+        color: #b94a3a;
+    }
+
+    .error-message h4 {
+        color: #6c2e22;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .error-message p {
+        color: #8c7c6b;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+
+    .try-again-btn {
+        background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 15px;
+        box-shadow: 0 4px 12px rgba(185,74,58,0.15);
+    }
+
+    .try-again-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(185,74,58,0.25);
+        color: white;
+        text-decoration: none;
+        background: linear-gradient(135deg, #b45309 0%, #e2b07b 100%);
+    }
+
+    /* Enhanced map controls styling */
+    .mapboxgl-ctrl-group {
+        border-radius: 10px !important;
+        box-shadow: 0 4px 15px rgba(185,74,58,0.08) !important;
+        border: 1px solid #ece6df !important;
+    }
+
+    .mapboxgl-ctrl button {
+        border-radius: 8px !important;
+        background: #fffaf6 !important;
+        border-color: #ece6df !important;
+    }
+
+    .mapboxgl-ctrl button:hover {
+        background: #f3c892 !important;
+    }
+
+    /* Enhanced popup styling */
+    .mapboxgl-popup-content {
+        border-radius: 12px !important;
+        box-shadow: 0 4px 15px rgba(185,74,58,0.15) !important;
+        border: 1px solid #ece6df !important;
+        background: #fffaf6 !important;
+    }
+
+    .mapboxgl-popup-tip {
+        border-top-color: #fffaf6 !important;
+    }
+
+    .mapboxgl-popup-content h4 {
+        color: #6c2e22 !important;
+        margin-bottom: 8px;
+    }
+
+    .mapboxgl-popup-content p {
+        color: #8c7c6b !important;
+        margin: 0;
+    }
+
+    @media (max-width: 768px) {
+        .directions-card {
+            padding: 20px;
+            margin: 10px;
+            border-radius: 15px;
+        }
+
+        .directions-title {
+            font-size: 2rem;
+        }
+
+        .route-info {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+            min-width: auto;
+        }
+
+        .route-details {
+            padding: 20px;
+        }
+
+        .route-details h3 {
+            font-size: 1.4rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            font-size: 0.8rem;
+        }
+
+        .back-link {
+            padding: 8px 16px;
+            font-size: 1rem;
+        }
+
+        .map-container {
+            height: 300px;
+        }
+
+        .error-message {
+            padding: 30px 20px;
+        }
+    }
+</style>
+
+<div class="directions-container">
+    <div class="container">
+        <div class="mb-4">
+            <a href="{% url 'site_detail' site.id %}" class="back-link">
+                <i class="fas fa-arrow-left me-2"></i>Back to {{ site.name }}
+            </a>
+        </div>
+
+        <div class="directions-card">
+            <h1 class="directions-title">
+                <i class="fas fa-route me-3" style="color: #ea9066;"></i>
+                Directions to {{ site.name }}
+            </h1>
+
+            {% if error_message %}
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h4>Unable to Get Directions</h4>
+                    <p>{{ error_message }}</p>
+                    <a href="{% url 'site_detail' site.id %}" class="try-again-btn">
+                        <i class="fas fa-redo me-2"></i>Try Again
+                    </a>
+                </div>
+            {% else %}
+                <div class="route-summary">
+                    <div class="route-info">
+                        <div class="info-item">
+                            <i class="fas fa-road"></i>
+                            <div class="info-value">{{ distance_km }} km</div>
+                            <div class="info-label">Distance</div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-clock"></i>
+                            <div class="info-value">{{ duration_minutes }} min</div>
+                            <div class="info-label">Duration</div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-{{ travel_mode_icon }}"></i>
+                            <div class="info-value">{{ travel_mode_display }}</div>
+                            <div class="info-label">Mode</div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if has_location %}
+                    <div class="route-details">
+                        <h3>
+                            <i class="fas fa-map" style="color: #ea9066;"></i>
+                            Route Map
+                        </h3>
+                        <div id="directions-map" class="map-container"></div>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if has_location and not error_message %}
+    {{ map_style_url|json_script:"map-style-data" }}
+    {{ start_coordinates|json_script:"start-coordinates" }}
+    {{ destination_coordinates|json_script:"destination-coordinates" }}
+    {{ encoded_polyline|json_script:"encoded-polyline" }}
+
+    <script>
+        // Polyline decoding function
+        function decodePolyline(encoded) {
+            if (!encoded) return [];
+            
+            let points = [];
+            let index = 0;
+            let lat = 0;
+            let lng = 0;
+            
+            while (index < encoded.length) {
+                let b;
+                let shift = 0;
+                let result = 0;
+                
+                do {
+                    b = encoded.charCodeAt(index++) - 63;
+                    result |= (b & 0x1f) << shift;
+                    shift += 5;
+                } while (b >= 0x20);
+                
+                let dlat = ((result & 1) !== 0 ? ~(result >> 1) : (result >> 1));
+                lat += dlat;
+                
+                shift = 0;
+                result = 0;
+                
+                do {
+                    b = encoded.charCodeAt(index++) - 63;
+                    result |= (b & 0x1f) << shift;
+                    shift += 5;
+                } while (b >= 0x20);
+                
+                let dlng = ((result & 1) !== 0 ? ~(result >> 1) : (result >> 1));
+                lng += dlng;
+                
+                points.push([lng / 1e5, lat / 1e5]);
+            }
+            
+            return points;
+        }
+
+        // Initialize directions map
+        var mapStyleUrl = JSON.parse(document.getElementById('map-style-data').textContent);
+        var startCoords = JSON.parse(document.getElementById('start-coordinates').textContent);
+        var destCoords = JSON.parse(document.getElementById('destination-coordinates').textContent);
+        var encodedPolyline = JSON.parse(document.getElementById('encoded-polyline').textContent);
+
+        var map = new mapboxgl.Map({
+            container: "directions-map",
+            style: mapStyleUrl,
+            center: [destCoords.lon, destCoords.lat],
+            zoom: 12,
+            attributionControl: false
+        });
+
+        map.on('load', function() {
+            // Add markers
+            new mapboxgl.Marker({ color: '#28a745' })
+                .setLngLat([startCoords.lon, startCoords.lat])
+                .setPopup(new mapboxgl.Popup().setHTML('<strong>Start:</strong> {{ start_address }}'))
+                .addTo(map);
+
+            new mapboxgl.Marker({ color: '#dc3545' })
+                .setLngLat([destCoords.lon, destCoords.lat])
+                .setPopup(new mapboxgl.Popup().setHTML('<strong>Destination:</strong> {{ site.name }}'))
+                .addTo(map);
+
+            // Decode and add the route polyline
+            if (encodedPolyline) {
+                var routeCoordinates = decodePolyline(encodedPolyline);
+                
+                if (routeCoordinates.length > 0) {
+                    // Add the route source
+                    map.addSource('route', {
+                        'type': 'geojson',
+                        'data': {
+                            'type': 'Feature',
+                            'properties': {},
+                            'geometry': {
+                                'type': 'LineString',
+                                'coordinates': routeCoordinates
+                            }
+                        }
+                    });
+
+                    // Add the route layer
+                    map.addLayer({
+                        'id': 'route',
+                        'type': 'line',
+                        'source': 'route',
+                        'layout': {
+                            'line-join': 'round',
+                            'line-cap': 'round'
+                        },
+                        'paint': {
+                            'line-color': '#ea9066',
+                            'line-width': 6,
+                            'line-opacity': 0.8
+                        }
+                    });
+
+                    // Add a subtle outline for the route
+                    map.addLayer({
+                        'id': 'route-outline',
+                        'type': 'line',
+                        'source': 'route',
+                        'layout': {
+                            'line-join': 'round',
+                            'line-cap': 'round'
+                        },
+                        'paint': {
+                            'line-color': '#a83c32',
+                            'line-width': 8,
+                            'line-opacity': 0.5
+                        }
+                    }, 'route');
+
+                    // Fit map to show the entire route
+                    var bounds = new mapboxgl.LngLatBounds();
+                    routeCoordinates.forEach(coord => bounds.extend(coord));
+                    map.fitBounds(bounds, { padding: 50 });
+                } else {
+                    // Fallback: fit map to show both markers if polyline decoding fails
+                    var bounds = new mapboxgl.LngLatBounds();
+                    bounds.extend([startCoords.lon, startCoords.lat]);
+                    bounds.extend([destCoords.lon, destCoords.lat]);
+                    map.fitBounds(bounds, { padding: 50 });
+                }
+            } else {
+                // Fallback: fit map to show both markers if no polyline
+                var bounds = new mapboxgl.LngLatBounds();
+                bounds.extend([startCoords.lon, startCoords.lat]);
+                bounds.extend([destCoords.lon, destCoords.lat]);
+                map.fitBounds(bounds, { padding: 50 });
+            }
+        });
+    </script>
+{% endif %}
+
+{% endblock content %}

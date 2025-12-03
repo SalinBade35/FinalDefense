@@ -1,0 +1,606 @@
+/* ========================================
+   BASE LAYOUT STYLES (NAVBAR & FOOTER)
+   Locked to be consistent across all pages
+   ======================================== */
+
+/* Theme tokens */
+:root {
+  --terra-bg: #a83c32;
+  --terra-accent: #e8cba8;
+  --terra-accent-2: #d4b28e;
+  --terra-dark: #2d1810;
+  --footer-grad: linear-gradient(135deg, #8c3a2b 0%, #6c2e22 100%);
+  --navbar-height: 70px;
+}
+
+/* Add padding to body to prevent content from hiding under fixed navbar */
+body {
+  padding-top: var(--navbar-height) !important;
+}
+
+/* =========================
+   NAVIGATION BAR (LOCKED)
+   ========================= */
+#app-navbar {
+  background-color: var(--terra-bg) !important;
+  padding: 0.5rem 2rem !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 1050 !important;
+  min-height: var(--navbar-height) !important;
+}
+
+/* Ensure container-fluid spans full width */
+#app-navbar .container-fluid {
+  max-width: 100% !important;
+  padding-left: 2rem !important;
+  padding-right: 2rem !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+}
+
+#app-navbar .logo-container {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  flex-shrink: 0 !important;
+}
+
+#app-navbar .logo-circle {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  background-color: var(--terra-accent) !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
+}
+
+#app-navbar .navbar-brand {
+  font-size: 1.25rem !important;
+  font-weight: bold !important;
+  color: #fff !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+}
+
+#app-navbar .navbar-nav {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  gap: 0.25rem !important;
+}
+
+#app-navbar .nav-link {
+  color: #fff !important;
+  padding: 0.5rem 0.75rem !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  border-radius: 0.25rem !important;
+}
+
+#app-navbar .nav-link .fa-home,
+#app-navbar .nav-link .fa-landmark,
+#app-navbar .nav-link .fa-utensils,
+#app-navbar .nav-link .fa-calendar-alt,
+#app-navbar .nav-link .fa-map,
+#app-navbar .nav-link .fa-book-open,
+#app-navbar .nav-link .fa-gift,
+#app-navbar .nav-link .fa-cloud-sun {
+  font-size: 0.9375rem !important;
+  margin-right: 0.25rem !important;
+}
+
+#app-navbar .nav-link:hover,
+#app-navbar .nav-link.active {
+  color: var(--terra-accent) !important;
+  border-bottom: 2px solid var(--terra-accent-2) !important;
+}
+
+/* Right side container for auth buttons and icons - Desktop only */
+#app-navbar .navbar-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1rem !important;
+  margin-left: auto !important;
+}
+
+/* Auth buttons */
+#app-navbar .auth-buttons {
+  display: flex !important;
+  gap: 0.75rem !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+}
+
+#app-navbar .auth-btn-login {
+  display: inline-block !important;
+  padding: 0.5rem 1.375rem !important;
+  background: transparent !important;
+  color: #fff !important;
+  border: 2px solid rgba(255, 255, 255, 0.8) !important;
+  border-radius: 1.5625rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  letter-spacing: 0.01875rem !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+  white-space: nowrap !important;
+  margin: 0.5rem 0.1rem 0.5rem 0.5rem;
+}
+#app-navbar .auth-btn-login:hover {
+  background: rgba(255,255,255,0.15) !important;
+  color: #fff !important;
+  border-color: #fff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(255,255,255,0.2) !important;
+}
+
+#app-navbar .auth-btn-register {
+  display: inline-block !important;
+  padding: 0.5rem 1.375rem !important;
+  background: linear-gradient(135deg, var(--terra-accent) 0%, var(--terra-accent-2) 100%) !important;
+  color: #3a2618 !important;
+  border: 2px solid transparent !important;
+  border-radius: 1.5625rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  letter-spacing: 0.01875rem !important;
+  box-shadow: 0 4px 12px rgba(232,203,168,0.3) !important;
+  white-space: nowrap !important;
+  margin: 0.5rem 0.5rem 0.5rem 0;
+}
+#app-navbar .auth-btn-register:hover {
+  background: linear-gradient(135deg, var(--terra-accent-2) 0%, #c9a87d 100%) !important;
+  color: var(--terra-dark) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 18px rgba(232,203,168,0.4) !important;
+}
+
+/* Icon links (profile, wishlist) */
+#app-navbar .nav-icons {
+  display: flex !important;
+  gap: 0.75rem !important;
+  align-items: center !important;
+  flex-shrink: 0 !important;
+  text-decoration: none !important;
+}
+
+#app-navbar .icon-link {
+  color: #fff !important;
+  font-size: 1rem !important;
+  transition: all 0.3s ease !important;
+  width: 2.375rem !important;
+  height: 2.375rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 50% !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  position: relative !important;
+  flex-shrink: 0 !important;
+  text-decoration: none !important;
+}
+
+#app-navbar .icon-link:hover {
+  color: var(--terra-accent) !important;
+  background: rgba(232, 203, 168, 0.2) !important;
+  border-color: rgba(232, 203, 168, 0.5) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(232, 203, 168, 0.25) !important;
+}
+
+#app-navbar .icon-link i { transition: transform 0.3s ease !important; }
+#app-navbar .icon-link:hover i { transform: scale(1.1) !important; }
+#app-navbar .icon-link .fa-heart { color: rgba(255,255,255,0.9) !important; }
+
+@keyframes heartBeat { 0%,100%{transform:scale(1)} 25%{transform:scale(1.2)} 50%{transform:scale(1.1)} }
+#app-navbar .icon-link:hover .fa-heart { color: var(--terra-accent) !important; animation: heartBeat .6s ease !important; }
+
+/* Dropdown */
+#app-navbar .dropdown-menu {
+  background-color: #fff !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  margin-top: 0.5rem !important;
+}
+
+#app-navbar .dropdown-item {
+  color: #3a2618 !important;
+  transition: all 0.3s ease !important;
+  padding: 0.5rem 1rem !important;
+}
+
+#app-navbar .dropdown-item:hover {
+  background-color: rgba(168, 60, 50, 0.1) !important;
+  color: var(--terra-bg) !important;
+}
+
+/* Toggler */
+#app-navbar .navbar-toggler { 
+  border-color: rgba(255,255,255,0.5) !important;
+  padding: 0.375rem 0.5rem !important;
+  margin-left: auto !important;
+}
+#app-navbar .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255,255,255,.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+}
+
+/* =========================
+   FOOTER (LOCKED)
+   ========================= */
+#app-footer {
+  background: var(--footer-grad) !important;
+  color: #f5ede6 !important;
+  padding: 4rem 0 2rem !important;
+  border-top: 3px solid #b94a3a !important;
+  position: relative !important;
+  z-index: 1040 !important;
+}
+
+#app-footer .footer-links { list-style: none !important; padding-left: 0 !important; }
+
+#app-footer .footer-links a {
+  color: #e2b07b !important;
+  text-decoration: none !important;
+  transition: color 0.3s ease !important;
+  font-weight: 500 !important;
+}
+#app-footer .footer-links a:hover { color: #f3c892 !important; text-decoration: underline !important; }
+
+#app-footer .footer-logo {
+  background-color: #e2b07b !important;
+  color: #6c2e22 !important;
+  border-radius: 50% !important;
+  width: 3.125rem !important; 
+  height: 3.125rem !important;
+  display: flex !important; 
+  align-items: center !important; 
+  justify-content: center !important;
+  font-weight: bold !important; 
+  margin: 0 auto 1rem !important;
+}
+
+#app-footer .social-icons a {
+  background-color: #e2b07b !important;
+  color: #6c2e22 !important;
+  padding: 0.625rem !important;
+  border-radius: 50% !important;
+  margin: 0 0.5rem !important;
+  transition: all 0.3s ease !important;
+  display: inline-flex !important; 
+  align-items: center !important; 
+  justify-content: center !important;
+  width: 2.5rem !important; 
+  height: 2.5rem !important;
+}
+#app-footer .social-icons a:hover {
+  background-color: #f3c892 !important;
+  color: #8c3a2b !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 4px 12px rgba(226,176,123,0.25) !important;
+}
+
+#app-footer .footer-bottom {
+  text-align: center !important;
+  padding-top: 2rem !important;
+  margin-top: 3rem !important;
+  border-top: 1px solid #8c3a2b !important;
+  font-size: 0.9rem !important;
+  opacity: 0.8 !important;
+  color: #e2b07b !important;
+}
+
+#app-footer h5 { color: #f3c892 !important; font-weight: 600 !important; margin-bottom: 1.5rem !important; }
+#app-footer .footer-center { text-align: center !important; }
+#app-footer .footer-center h3 { color: #f3c892 !important; font-weight: 700 !important; margin-bottom: .5rem !important; }
+#app-footer .footer-center p { color: #e2b07b !important; font-style: italic !important; margin-bottom: 1.5rem !important; }
+
+/* =========================
+   MODALS (unchanged theme)
+   ========================= */
+.terms-modal .modal-backdrop.show { background-color: rgba(20,12,10,.85) !important; }
+.terms-modal .modal-content {
+  background: linear-gradient(180deg, rgba(255,250,245,.98) 0%, rgba(252,245,235,.97) 100%) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 2px solid rgba(168,60,50,.25) !important;
+  border-radius: 1.25rem !important;
+  box-shadow: 0 20px 60px rgba(24,12,8,.35) !important;
+  color: #2d1810 !important;
+  overflow: hidden !important;
+}
+.terms-modal .modal-header {
+  border-bottom: 2px solid rgba(168,60,50,.15) !important;
+  padding: 1.5rem 2rem !important;
+  align-items: flex-start !important;
+  gap: 0.75rem !important;
+  background: linear-gradient(135deg, rgba(232,203,168,.35) 0%, rgba(212,178,142,.25) 100%) !important;
+}
+.terms-modal .modal-title { margin:0!important; font-size:1.65rem!important; color:#6c2e22!important; font-weight:800!important; }
+.terms-modal .modal-subtitle { margin:0!important; font-size:.95rem!important; color:#8c3a2b!important; font-style:italic!important; font-weight:500!important; }
+
+.terms-modal .terms-close {
+  position: absolute !important;
+  top: 0.875rem !important;
+  right: 0.875rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  width: 2.75rem !important;
+  height: 2.75rem !important;
+  border-radius: 50% !important;
+  background: rgba(168, 60, 50, 0.15) !important;
+  border: 2px solid rgba(168, 60, 50, 0.3) !important;
+  box-shadow: 0 4px 12px rgba(24,12,8,0.15) !important;
+  z-index: 2 !important;
+}
+
+.terms-modal .terms-close::before,
+.terms-modal .terms-close::after {
+  content: "" !important;
+  position: absolute !important;
+  width: 1.375rem !important;
+  height: 0.1875rem !important;
+  background-color: #8c3a2b !important;
+  border-radius: 0.125rem !important;
+}
+
+.terms-modal .terms-close::before { transform: rotate(45deg) !important; }
+.terms-modal .terms-close::after  { transform: rotate(-45deg) !important; }
+
+.terms-modal .terms-close:hover {
+  background: rgba(168, 60, 50, 0.25) !important;
+  transform: scale(1.05) !important;
+}
+
+/* Fallback if using Bootstrap's default close button */
+.terms-modal .btn-close {
+  position: absolute !important;
+  top: 0.75rem !important;
+  right: 0.75rem !important;
+  width: 2.75rem !important;
+  height: 2.75rem !important;
+  border-radius: 50% !important;
+  opacity: 1 !important;
+  background-color: rgba(168, 60, 50, 0.15) !important;
+  box-shadow: 0 4px 12px rgba(24,12,8,.15) !important;
+  background-size: 1rem !important;
+  filter: invert(18%) sepia(43%) saturate(1455%) hue-rotate(337deg) brightness(92%) contrast(87%) !important;
+}
+
+.terms-modal .btn-close:focus {
+  outline: 2px solid rgba(168,60,50,.5) !important;
+  outline-offset: 2px !important;
+}
+
+.terms-modal .modal-body { 
+  padding: 1.5rem 2rem 2rem !important; 
+  max-height: 65vh !important; 
+  overflow-y: auto !important; 
+  background: rgba(255,255,255,.5) !important; 
+}
+.terms-body h6 { 
+  color: #8c3a2b !important; 
+  margin-top: 1.25rem !important; 
+  margin-bottom: 0.75rem !important; 
+  font-weight: 800 !important; 
+  font-size: 1.15rem !important; 
+}
+.terms-body p { 
+  color: #2d1810 !important; 
+  line-height: 1.75 !important; 
+  margin-bottom: 0.875rem !important; 
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+/* Large tablets and small desktops */
+@media (max-width: 992px) {
+  :root {
+    --navbar-height: 65px;
+  }
+  
+  #app-navbar { 
+    padding: 0.5rem 1rem !important; 
+  }
+  
+  #app-navbar .container-fluid {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Hide auth buttons and icons on desktop navbar for mobile */
+  #app-navbar .navbar-right {
+    display: none !important;
+  }
+  
+  #app-navbar .navbar-collapse {
+    background-color: var(--terra-bg) !important;
+    padding: 1rem !important;
+    margin-top: 1rem !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  #app-navbar .navbar-nav {
+    margin: 0 !important;
+    text-align: center !important;
+  }
+  
+  #app-navbar .nav-item {
+    margin: 0.25rem 0 !important;
+  }
+  
+  /* Show auth buttons and icons inside collapsed menu */
+  #app-navbar .navbar-collapse .auth-buttons {
+    display: flex !important;
+    width: 100% !important;
+    justify-content: center !important;
+    margin: 1.5rem 0 1rem 0 !important;
+    padding-top: 1rem !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+    flex-direction: row !important;
+    gap: 0.75rem !important;
+  }
+  
+  #app-navbar .navbar-collapse .auth-btn-login,
+  #app-navbar .navbar-collapse .auth-btn-register {
+    flex: 1 !important;
+    max-width: 150px !important;
+    text-align: center !important;
+  }
+  
+  #app-navbar .navbar-collapse .nav-icons {
+    display: flex !important;
+    width: 100% !important;
+    justify-content: center !important;
+    margin: 1rem 0 0.5rem 0 !important;
+    gap: 1rem !important;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  :root {
+    --navbar-height: 60px;
+  }
+  
+  #app-navbar .logo-circle {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+  }
+  
+  #app-navbar .navbar-brand {
+    font-size: 1.125rem !important;
+  }
+
+  #app-navbar .navbar-collapse .auth-btn-login,
+  #app-navbar .navbar-collapse .auth-btn-register { 
+    padding: 0.5rem 1.125rem !important; 
+    font-size: 0.8125rem !important;
+  }
+
+  #app-navbar .navbar-collapse .icon-link { 
+    width: 2.5rem !important; 
+    height: 2.5rem !important; 
+    font-size: 1rem !important; 
+  }
+  
+  #app-footer .footer-logo-container { 
+    margin-top: 2rem !important; 
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 576px) {
+  :root {
+    --navbar-height: 55px;
+  }
+  
+  #app-navbar {
+    padding: 0.375rem 0.75rem !important;
+  }
+  
+  #app-navbar .container-fluid {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+  
+  #app-navbar .logo-container {
+    gap: 0.5rem !important;
+  }
+  
+  #app-navbar .logo-circle {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+  
+  #app-navbar .navbar-brand {
+    font-size: 1rem !important;
+  }
+
+  #app-navbar .navbar-collapse .auth-buttons {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+
+  #app-navbar .navbar-collapse .auth-btn-login,
+  #app-navbar .navbar-collapse .auth-btn-register { 
+    padding: 0.625rem 1.25rem !important; 
+    font-size: 0.875rem !important;
+    width: 100% !important;
+    max-width: 250px !important;
+  }
+
+  #app-navbar .navbar-collapse .icon-link { 
+    width: 2.75rem !important; 
+    height: 2.75rem !important; 
+    font-size: 1.1rem !important; 
+  }
+  
+  #app-navbar .navbar-collapse .nav-icons { 
+    gap: 1.25rem !important; 
+  }
+  
+  #app-navbar .navbar-toggler {
+    padding: 0.25rem 0.375rem !important;
+  }
+  
+  #app-navbar .navbar-toggler-icon {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+  }
+  
+  .terms-modal .modal-dialog { 
+    margin: 1rem !important; 
+  }
+  .terms-modal .modal-content { 
+    border-radius: 1rem !important; 
+  }
+  .terms-modal .modal-body { 
+    max-height: 60vh !important; 
+    padding: 1.25rem 1.5rem 1.5rem !important; 
+  }
+}
+
+/* Extra small phones */
+@media (max-width: 380px) {
+  #app-navbar .navbar-brand {
+    font-size: 0.9375rem !important;
+  }
+  
+  #app-navbar .logo-circle {
+    width: 1.875rem !important;
+    height: 1.875rem !important;
+  }
+  
+  #app-navbar .navbar-collapse .auth-btn-login,
+  #app-navbar .navbar-collapse .auth-btn-register { 
+    padding: 0.5rem 1rem !important; 
+    font-size: 0.8125rem !important;
+  }
+  
+  #app-navbar .navbar-collapse .icon-link { 
+    width: 2.5rem !important; 
+    height: 2.5rem !important; 
+    font-size: 1rem !important; 
+  }
+}

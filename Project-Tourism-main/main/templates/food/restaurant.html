@@ -1,0 +1,411 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+
+<style>
+  body {
+    font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 20px auto; /* Reduced top margin since we added padding to body */
+    position: relative;
+    padding: 0 20px;
+  }
+
+  /* Back button */
+  .back-button {
+    background: linear-gradient(135deg, #e2b07b 0%, #f3c892 100%);
+    color: #6c2e22;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(185,74,58,0.08);
+    border: 2px solid #b94a3a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+    width: fit-content;
+    margin-bottom: 30px;
+    position: relative;
+  }
+
+  .back-button:hover {
+    background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+    color: white;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(185,74,58,0.15);
+  }
+
+  .food-title-section {
+    text-align: center;
+    margin-bottom: 50px;
+    position: relative;
+  }
+
+  .food-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #6c2e22;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(108,46,34,0.1);
+    position: relative;
+    display: inline-block;
+  }
+
+  .restaurants-container {
+    background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+    border-radius: 25px;
+    padding: 50px;
+    box-shadow: 0 8px 30px rgba(185,74,58,0.08);
+    border: 1px solid #ece6df;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .restaurants-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><g fill="%23e2b07b" fill-opacity="0.03"><circle cx="3" cy="3" r="1"/><circle cx="13" cy="13" r="1"/></g></svg>');
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .restaurants-container > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    color: #6c2e22;
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .section-emoji {
+    font-size: 2.2rem;
+    filter: drop-shadow(0 2px 4px rgba(185,74,58,0.15));
+  }
+
+  .restaurant-card {
+    background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 6px 20px rgba(185,74,58,0.08);
+    border: 2px solid #e2b07b;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .restaurant-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(185,74,58,0.15);
+    border-color: #b94a3a;
+  }
+
+  .restaurant-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #b94a3a, #e2b07b);
+    border-radius: 20px 20px 0 0;
+  }
+
+  .restaurant-name {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #6c2e22;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 2px rgba(108,46,34,0.1);
+    position: relative;
+    z-index: 2;
+  }
+
+  .restaurant-info {
+    margin-bottom: 15px;
+    font-size: 1.05rem;
+    color: #3d2c22;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    line-height: 1.6;
+    font-weight: 500;
+    position: relative;
+    z-index: 2;
+  }
+
+  .restaurant-info strong {
+    color: #b94a3a;
+    font-weight: 600;
+    min-width: 80px;
+  }
+
+  .restaurant-info .info-icon {
+    color: #b94a3a;
+    font-size: 1.1rem;
+    margin-top: 2px;
+  }
+
+  .maps-button {
+    background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(185,74,58,0.15);
+    margin-top: 15px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .maps-button:hover {
+    background: linear-gradient(135deg, #b45309 0%, #e2b07b 100%);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(185,74,58,0.25);
+  }
+
+  .no-restaurants {
+    text-align: center;
+    padding: 60px 20px;
+    color: #8c7c6b;
+    background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+    border-radius: 20px;
+    border: 2px dashed #e2b07b;
+    margin-top: 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .no-restaurants-icon {
+    font-size: 4rem;
+    color: #e2b07b;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .no-restaurants-title {
+    font-size: 1.5rem;
+    color: #6c2e22;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .no-restaurants-text {
+    font-size: 1.1rem;
+    color: #8c7c6b;
+    font-style: italic;
+  }
+
+  /* Animation for cards */
+  .restaurant-card {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  .restaurant-card:nth-child(1) { animation-delay: 0.1s; }
+  .restaurant-card:nth-child(2) { animation-delay: 0.2s; }
+  .restaurant-card:nth-child(3) { animation-delay: 0.3s; }
+  .restaurant-card:nth-child(4) { animation-delay: 0.4s; }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    body {
+      padding-top: 100px; /* Adjust for smaller screens */
+    }
+
+    .container {
+      padding: 20px 15px;
+      margin: 10px auto; /* Further reduced for mobile */
+    }
+
+    .food-title {
+      font-size: 2.2rem;
+    }
+
+    .restaurants-container {
+      padding: 30px 25px;
+      border-radius: 20px;
+    }
+
+    .section-title {
+      font-size: 1.6rem;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .section-emoji {
+      font-size: 2rem;
+    }
+
+    .restaurant-card {
+      padding: 25px 20px;
+    }
+
+    .restaurant-name {
+      font-size: 1.4rem;
+    }
+
+    .restaurant-info {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .restaurant-info strong {
+      min-width: auto;
+    }
+
+    .maps-button {
+      width: 100%;
+      justify-content: center;
+      padding: 12px 20px;
+    }
+
+    .back-button {
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      padding: 8px 16px;
+    }
+
+    .no-restaurants {
+      padding: 40px 15px;
+    }
+
+    .no-restaurants-icon {
+      font-size: 3rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    body {
+      padding-top: 90px; /* Further adjust for very small screens */
+    }
+
+    .food-title {
+      font-size: 1.9rem;
+    }
+
+    .restaurants-container {
+      padding: 25px 20px;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+    }
+
+    .restaurant-card {
+      padding: 20px 15px;
+    }
+
+    .restaurant-name {
+      font-size: 1.3rem;
+    }
+  }
+</style>
+
+<div class="container my-5">
+  <!-- Food Title -->
+  <div class="food-title-section">
+    <h1 class="food-title">{{ food.name }}</h1>
+  </div>
+
+  <!-- Restaurant List -->
+  <div class="restaurants-container">
+    <!-- Back Button inside content block -->
+    <a href="javascript:history.back()" class="back-button">
+      <i class="fas fa-arrow-left"></i>
+      Back
+    </a>
+
+    <div class="restaurants-body">
+      <h3 class="section-title">
+        <span class="section-emoji">🍽</span>
+        Available at These Restaurants:
+      </h3>
+
+      {% if data %} 
+      {% for restaurant in data %}
+      <div class="restaurant-card">
+        <h4 class="restaurant-name">{{ restaurant.name }}</h4>
+
+        {% if restaurant.address %}
+        <div class="restaurant-info">
+          <span class="info-icon">📍</span>
+          <div>
+            <strong>Address:</strong> {{ restaurant.address }}
+          </div>
+        </div>
+        {% endif %} 
+        
+        {% if restaurant.contact %}
+        <div class="restaurant-info">
+          <span class="info-icon">📞</span>
+          <div>
+            <strong>Contact:</strong> {{ restaurant.contact }}
+          </div>
+        </div>
+        {% endif %} 
+        
+        {% if restaurant.maps_link %}
+        <a
+          href="{{ restaurant.maps_link }}"
+          class="maps-button"
+          target="_blank"
+        >
+          <i class="fas fa-map-marker-alt"></i>
+          View on Google Maps
+        </a>
+        {% endif %}
+      </div>
+      {% endfor %} 
+      
+      {% else %}
+      <div class="no-restaurants">
+        <span class="no-restaurants-icon">🏪</span>
+        <div class="no-restaurants-title">No Restaurants Found</div>
+        <p class="no-restaurants-text">
+          This food is not yet listed in any restaurants.
+        </p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,172 @@
+{% extends "base.html" %} 
+{% load static %} 
+
+{% block title %}
+<title>HBHK - Bhaktapur Tourism</title>
+{% endblock title %} 
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}" />
+{% endblock extra_css %}
+
+
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-image"></div>
+  <div class="overlay"></div>
+  <div class="hero-content">
+    {% comment %} <img src="/media/img/namaste.gif" alt="Namaste" style="width:60px; margin-bottom: 18px;"> {% endcomment %}
+    <h1><br><br><br>BHAKTAPUR WELCOMES YOU</h1>
+    <p>A Timeless Journey Through Culture, Craft, and Cuisine...</p>
+    <a href="#discover-bhaktapur" class="btn custom-btn">Explore More</a>
+  </div>
+</section>
+
+<!-- Discover Bhaktapur Section -->
+<section class="discover-section" id="discover-bhaktapur">
+  <div class="container">
+    <h2 class="section-title">Discover Bhaktapur</h2>
+
+    <div class="row">
+      <div class="col-md-6 mb-4">
+        <div class="category-card">
+          <div class="card-image historical-bg"></div>
+          <div class="card-content">
+            <h3>Historical Sites</h3>
+            <p>
+              Explore ancient temples, palaces, and squares that showcase
+              Nepal's rich heritage.
+            </p>
+            <a href="{% url 'sites' %}" class="card-link"
+              >Explore Sites <i class="fas fa-arrow-right"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <div class="category-card">
+          <div class="card-image cultural-bg"></div>
+          <div class="card-content">
+            <h3>Cultural Events</h3>
+            <p>
+              Experience vibrant festivals, traditional dances, and religious
+              ceremonies.
+            </p>
+            <a href="{% url 'events' %}" class="card-link"
+              >View Events <i class="fas fa-arrow-right"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <div class="category-card">
+          <div class="card-image cuisine-bg"></div>
+          <div class="card-content">
+            <h3>Local Cuisine</h3>
+            <p>
+              Savor authentic Newari dishes and traditional delicacies unique to
+              Bhaktapur.
+            </p>
+            <a href="{% url 'listoffood' %}" class="card-link"
+              >Explore Foods <i class="fas fa-arrow-right"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <div class="category-card">
+          <div class="card-image blogs-bg"></div>
+          <div class="card-content">
+            <h3>Blogs and Reviews</h3>
+            <p>
+              View the reviews and blog posts of visitors and get to explore
+              more.
+            </p>
+            <a href="{% url 'contribution' %}" class="card-link"
+              >View Blogs <i class="fas fa-arrow-right"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Living Heritage Section -->
+<section class="heritage-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="heritage-content">
+          <h2>Experience the Living Heritage</h2>
+          <p>
+            Bhaktapur, known as the "City of Devotees," is a living museum of
+            medieval art and architecture. This ancient city offers a glimpse
+            into Nepal's rich cultural heritage with its well-preserved palaces,
+            courtyards, temples, and vibrant local life.
+          </p>
+
+          <ul class="feature-list">
+            <li>
+              <i class="fas fa-check-circle"></i> Authentic cultural experiences
+              and vibrant festivals
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i> Heritage Site with
+              centuries-old architecture
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i> Traditional craftsmanship
+              passed down through generations
+            </li>
+          </ul>
+
+          <button class="btn visit-btn"><a href="{% url 'sites' %}" style="text-decoration: none; color: white;">Visit Now</a></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Events Section --><!-- Events Section -->
+<section class="events-section">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="section-title">Upcoming Events</h2>
+      <a href="{% url 'events' %}" class="view-all"
+        >View All Events <i class="fas fa-arrow-right"></i
+      ></a>
+    </div>
+
+    <div class="row">
+      {% if latest_events %}
+        {% for event in latest_events %}
+        <div class="col-md-4 mb-4">
+          <div class="event-card">
+            <div class="event-image" {% if event.image %}style="background-image: url('{{ event.image.url }}');"{% endif %}></div>
+            <div class="event-date">
+              {{ event.start_date|date:"F d" }}{% if event.start_date.date != event.end_date.date %}-{{ event.end_date|date:"d" }}{% endif %}, {{ event.start_date|date:"Y" }}
+            </div>
+            <div class="event-details">
+              <h3>{{ event.title }}</h3>
+              <p>
+                {{ event.description|truncatewords:20 }}
+              </p>
+              <a href="{% url 'learnmore' event.id %}" class="btn learn-more-btn">Learn More</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="col-12">
+          <p class="text-center">No upcoming events at the moment. Check back soon!</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% endblock content %}

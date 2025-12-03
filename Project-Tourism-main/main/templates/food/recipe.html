@@ -1,0 +1,498 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+
+<style>
+  body {
+    font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+    line-height: 1.6;
+    color: #3d2c22;
+    min-height: 100vh;
+  }
+
+  .container {
+    margin: 0 auto;
+    padding: 40px 20px;
+    max-width: 1200px;
+  }
+
+  .recipe-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 40px;
+    justify-content: center;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+    padding: 12px 20px;
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(185,74,58,0.08);
+    font-size: 0.95rem;
+    color: #6c2e22;
+    border: 2px solid #e2b07b;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .meta-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(185,74,58,0.15);
+    border-color: #b94a3a;
+  }
+
+  .meta-item i {
+    margin-right: 10px;
+    color: #b94a3a;
+    font-size: 1.1rem;
+  }
+
+  .recipe-content {
+    gap: 40px;
+    align-items: start;
+  }
+
+  .recipe-main {
+    background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+    border-radius: 20px;
+    padding: 50px;
+    box-shadow: 0 8px 30px rgba(185,74,58,0.08);
+    border: 1px solid #ece6df;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .recipe-main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><g fill="%23e2b07b" fill-opacity="0.03"><circle cx="3" cy="3" r="1"/><circle cx="13" cy="13" r="1"/></g></svg>');
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .recipe-main > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  .recipe-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #6c2e22;
+    margin-bottom: 20px;
+    line-height: 1.2;
+    text-shadow: 2px 2px 4px rgba(108,46,34,0.1);
+    text-align: center;
+  }
+
+  .recipe-description {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #3d2c22;
+    margin-bottom: 40px;
+    text-align: justify;
+    background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+    padding: 25px;
+    border-radius: 15px;
+    border-left: 5px solid #b94a3a;
+    box-shadow: 0 4px 15px rgba(185,74,58,0.05);
+  }
+
+  .recipe-description p {
+    margin-bottom: 15px;
+  }
+
+  .ingredients-section, .instructions-section {
+    margin-top: 50px;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #6c2e22;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #e2b07b;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .section-title::before {
+    content: '';
+    width: 50px;
+    height: 4px;
+    background: linear-gradient(135deg, #b94a3a 0%, #e2b07b 100%);
+    border-radius: 2px;
+  }
+
+  .ingredients-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(185,74,58,0.05);
+  }
+
+  .ingredient-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(185,74,58,0.08);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    position: relative;
+  }
+
+  .ingredient-item:last-child {
+    border-bottom: none;
+  }
+
+  .ingredient-item::before {
+    content: "•";
+    color: #b94a3a;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-right: 15px;
+    margin-top: 2px;
+  }
+
+  .ingredient-text {
+    flex: 1;
+    color: #3d2c22;
+    font-weight: 500;
+  }
+
+  .ingredient-text a {
+    color: #b94a3a;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 10px;
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #e2b07b 0%, #f3c892 100%);
+    border-radius: 15px;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .ingredient-text a:hover {
+    background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(185,74,58,0.15);
+  }
+
+  .recipe-image-container {
+    position: relative;
+    margin-bottom: 30px;
+  }
+
+  .recipe-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(185,74,58,0.15);
+    transition: transform 0.3s ease;
+    border: 3px solid #e2b07b;
+  }
+
+  .recipe-image:hover {
+    transform: scale(1.02);
+  }
+
+  /* Instructions Section */
+  .instructions-section .instructions-list {
+    background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(185,74,58,0.05);
+  }
+
+  .instruction-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(185,74,58,0.08);
+  }
+
+  .instruction-item:last-child {
+    border-bottom: none;
+  }
+
+  .instruction-number {
+    background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-right: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    box-shadow: 0 4px 12px rgba(185,74,58,0.15);
+    border: 2px solid #e2b07b;
+  }
+
+  .instruction-text {
+    flex: 1;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #3d2c22;
+    font-weight: 500;
+  }
+
+  /* Nutritional Values Styling */
+  .instructions-section:last-of-type .instructions-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 30px;
+  }
+
+  .instructions-section:last-of-type .instruction-text {
+    background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    border: 2px solid #e2b07b;
+    font-weight: 600;
+    color: #6c2e22;
+    box-shadow: 0 4px 12px rgba(185,74,58,0.08);
+    transition: all 0.3s ease;
+  }
+
+  .instructions-section:last-of-type .instruction-text:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(185,74,58,0.15);
+    border-color: #b94a3a;
+  }
+
+  /* Enhanced placeholder styling */
+  .recipe-image[style*="background"] {
+    background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
+    font-size: 1.2rem !important;
+    text-align: center !important;
+    border: 3px solid #e2b07b !important;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 968px) {
+    .recipe-content {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    .recipe-image-container {
+      position: static;
+      order: -1;
+    }
+
+    .recipe-image {
+      height: 300px;
+    }
+
+    .recipe-main {
+      padding: 40px 30px;
+    }
+
+    .recipe-title {
+      font-size: 2.5rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 20px 15px;
+    }
+
+    .recipe-meta {
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .meta-item {
+      font-size: 0.9rem;
+      padding: 10px 16px;
+    }
+
+    .recipe-main {
+      padding: 30px 20px;
+    }
+
+    .recipe-title {
+      font-size: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.6rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .recipe-image {
+      height: 250px;
+    }
+
+    .ingredients-list,
+    .instructions-section .instructions-list {
+      padding: 20px;
+    }
+
+    .instructions-section:last-of-type .instructions-list {
+      grid-template-columns: 1fr;
+    }
+
+    .ingredient-text a {
+      display: block;
+      margin-top: 8px;
+      margin-left: 0;
+      text-align: center;
+      width: fit-content;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .recipe-main {
+      padding: 25px 15px;
+    }
+
+    .recipe-title {
+      font-size: 1.8rem;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+    }
+
+    .recipe-description {
+      padding: 20px;
+    }
+  }
+</style>
+
+<div class="container">
+  <!-- Recipe Meta Information -->
+
+  <div class="recipe-meta">
+    <div class="meta-item">
+      <i class="fas fa-clock"></i>
+      {{ recipe.prep_time }} mins
+    </div>
+
+    <div class="meta-item">
+      <i class="fas fa-users"></i>
+      Serve {{ recipe.servings }}
+    </div>
+  </div>
+
+  <!-- Main Recipe Content -->
+  <div class="recipe-content">
+    <!-- Recipe Information -->
+    <div class="recipe-main">
+      <h1 class="recipe-title">{{ recipe.name }}</h1>
+      <div class="row">
+        <div class="col-6">
+          <div class="recipe-description">
+            <p>{{ recipe.description }}</p>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="recipe-image-container">
+            {% if recipe.image %}
+            <img
+              src="{{ recipe.image.url }}"
+              alt="{{ recipe.name }}"
+              class="recipe-image"
+            />
+            {% else %}
+            <div
+              class="recipe-image"
+              style="
+                background: linear-gradient(135deg, #d4746a 0%, #a83c32 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 1.2rem;
+                text-align: center;
+              "
+            >
+              <div>
+                <i
+                  class="fas fa-utensils"
+                  style="font-size: 3rem; margin-bottom: 15px; display: block"
+                ></i>
+                {{ recipe.name }}
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Ingredients Section -->
+      <div class="ingredients-section">
+        <h2 class="section-title">Ingredients</h2>
+        <ol class="ingredients-list">
+          {% for ingredient in recipe.ingredient_list.all %}
+          <li class="ingredient-text">
+            {{ ingredient.name }}
+            <a href="{% url 'ingredient_shop' ingredient.id %}" target="_blank"
+              >🛒 Buy Now</a
+            >
+          </li>
+          {% empty %}
+          <li>No ingredients available for this recipe.</li>
+          {% endfor %}
+        </ol>
+      </div>
+
+      <!-- Instructions Section -->
+      {% if recipe.instructions %}
+      <div class="instructions-section">
+        <h2 class="section-title">Instructions</h2>
+        <div class="instructions-list">
+          <div class="instruction-text">{{ recipe.instructions }}</div>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="instructions-section">
+        <h2 class="section-title">Nutritional values</h2>
+        <div class="instructions-list">
+          <div class="instruction-text">Calories:{{ recipe.calories }}</div>
+          <div class="instruction-text">Calories:{{ recipe.carbohydrate }}</div>
+          <div class="instruction-text">Calories:{{ recipe.protein }}</div>
+          <div class="instruction-text">Calories:{{ recipe.fat }}</div>
+        </div>
+      </div>
+
+      <!-- Recipe Image -->
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

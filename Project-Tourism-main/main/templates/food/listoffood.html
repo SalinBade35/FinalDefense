@@ -1,0 +1,550 @@
+<!-- food/listoffood.html -->
+{% extends "base.html" %} 
+{% load static %} 
+
+{% block content %}
+<style>
+  /* Scope all styles to the food container to prevent affecting navbar */
+  .food-container {
+    font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+    margin: 0;
+    padding: 20px 0;
+    min-height: 100vh;
+  }
+
+  .food-container .recipe-section {
+    background: transparent;
+    padding: 40px 0;
+    overflow: visible;
+  }
+
+  .food-container .container {
+    overflow: visible;
+  }
+
+  .food-container .row {
+    overflow: visible;
+  }
+
+  .food-container .col-lg-4,
+  .food-container .col-md-6 {
+    overflow: visible;
+  }
+
+  .food-container .section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    color: #6c2e22;
+    margin-bottom: 1rem;
+    font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 1px 1px 3px rgba(108,46,34,0.1);
+    position: relative;
+    padding-bottom: 20px;
+  }
+
+  .food-container .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(135deg, #b94a3a 0%, #e2b07b 100%);
+    border-radius: 2px;
+  }
+
+  .food-container .section-subtitle {
+    text-align: center;
+    color: #8c7c6b;
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+  }
+
+  .food-container .recipe-card {
+    background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(185,74,58,0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+    position: relative;
+    margin-bottom: 30px;
+    border: 1px solid #ece6df;
+  }
+
+  .food-container .recipe-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(185,74,58,0.15);
+    border-color: #e2b07b;
+  }
+
+  .food-container .recipe-image {
+    height: 200px;
+    background: linear-gradient(135deg, #ece6df 0%, #f3c892 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+  }
+
+  /* Image styling */
+  .food-container .recipe-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .food-container .recipe-card:hover .recipe-image img {
+    transform: scale(1.05);
+  }
+
+  /* Fallback when no image */
+  .food-container .recipe-image.no-image::before {
+    content: "🍽️";
+    font-size: 3rem;
+    color: #b94a3a;
+  }
+
+  .food-container .category-tag {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+    color: white;
+    padding: 8px 18px;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(185,74,58,0.25);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .food-container .recipe-content {
+    padding: 25px;
+    position: relative;
+    background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+  }
+
+  /* Fixed: Title and dropdown container */
+  .food-container .recipe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .food-container .recipe-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #6c2e22;
+    margin: 0;
+    flex: 1;
+    padding-right: 15px;
+    font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.3;
+  }
+
+  /* Fixed: Dropdown positioning */
+  .food-container .dots-menu-container {
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1000;
+  }
+
+  .food-container .dropdown {
+    position: relative;
+  }
+
+  .food-container .recipe-description {
+    color: #8c7c6b;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .food-container .recipe-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  /* Fixed Dropdown styles */
+  .food-container .dots-menu {
+    background: linear-gradient(135deg, #e2b07b 0%, #f3c892 100%);
+    border: 2px solid #b94a3a;
+    color: #6c2e22;
+    font-size: 1.5rem;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    box-shadow: 0 2px 8px rgba(185,74,58,0.15);
+  }
+
+  .food-container .dots-menu:hover {
+    background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+    color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(185,74,58,0.25);
+  }
+
+  .food-container .dots-menu:focus {
+    box-shadow: 0 0 0 3px rgba(185,74,58,0.2);
+    background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+    color: #fff;
+    outline: none;
+  }
+
+  .food-container .dropdown-toggle::after {
+    display: none;
+  }
+
+  /* Fixed dropdown menu positioning and z-index */
+  .food-container .custom-dropdown-menu {
+    background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+    border: 2px solid #e2b07b;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(185,74,58,0.15);
+    padding: 8px 0;
+    min-width: 240px;
+    z-index: 1050;
+    position: absolute;
+    right: 0;
+    left: auto;
+    top: 100%;
+    margin-top: 5px;
+    transform: none;
+    backdrop-filter: blur(10px);
+  }
+
+  /* Override Bootstrap's default dropdown positioning */
+  .food-container .dropdown-menu[data-bs-popper] {
+    right: 0;
+    left: auto;
+  }
+
+  .food-container .custom-dropdown-item {
+    padding: 12px 20px;
+    color: #6c2e22;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-size: 0.95rem;
+    font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 500;
+  }
+
+  .food-container .custom-dropdown-item:hover {
+    background: linear-gradient(135deg, #e2b07b 0%, #f3c892 100%);
+    color: #6c2e22;
+    text-decoration: none;
+    transform: translateX(5px);
+    border-radius: 8px;
+    margin: 0 8px;
+  }
+
+  .food-container .custom-dropdown-item:focus {
+    background: linear-gradient(135deg, #e2b07b 0%, #f3c892 100%);
+    color: #6c2e22;
+    outline: none;
+    border-radius: 8px;
+    margin: 0 8px;
+  }
+
+  .food-container .custom-dropdown-item i {
+    width: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #b94a3a;
+  }
+
+  .food-container .dropdown-divider {
+    border-top: 1px solid #ece6df;
+    margin: 8px 12px;
+  }
+
+  /* Ensure dropdown appears above other content and prevent overflow issues */
+  .food-container .dropdown-menu.show {
+    display: block;
+  }
+
+  /* Prevent card overflow issues */
+  .food-container .col-lg-4,
+  .food-container .col-md-6 {
+    position: relative;
+    z-index: 1;
+  }
+
+  .food-container .col-lg-4:hover,
+  .food-container .col-md-6:hover {
+    z-index: 10;
+  }
+
+  /* Enhanced card animation */
+  .food-container .recipe-card {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .food-container .recipe-card:nth-child(1) { animation-delay: 0.1s; }
+  .food-container .recipe-card:nth-child(2) { animation-delay: 0.2s; }
+  .food-container .recipe-card:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .food-container .recipe-content {
+      padding: 20px;
+    }
+
+    .food-container .recipe-title {
+      font-size: 1.3rem;
+    }
+
+    .food-container .recipe-image {
+      height: 180px;
+    }
+
+    .food-container .section-title {
+      font-size: 2rem;
+    }
+
+    .food-container .section-subtitle {
+      font-size: 1rem;
+      padding: 0 20px;
+    }
+
+    .food-container .custom-dropdown-menu {
+      min-width: 220px;
+      right: 10px;
+    }
+
+    .food-container .dots-menu {
+      width: 36px;
+      height: 36px;
+      font-size: 1.3rem;
+    }
+  }
+
+  /* Loading state for images */
+  .food-container .recipe-image.loading {
+    background: linear-gradient(90deg, #ece6df 25%, #f3c892 50%, #ece6df 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+
+  @keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Enhanced visual effects */
+  .food-container .recipe-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><g fill="%23e2b07b" fill-opacity="0.03"><circle cx="3" cy="3" r="1"/><circle cx="13" cy="13" r="1"/></g></svg>');
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .food-container .recipe-content {
+    position: relative;
+    z-index: 2;
+  }
+</style>
+
+<div class="food-container">
+  <div class="recipe-section">
+    <div class="container">
+      <h1 class="section-title">Traditional Cuisine</h1>
+      <p class="section-subtitle">
+        Explore the rich culinary heritage of Bhaktapur with authentic dishes that
+        have been passed down through generations.
+      </p>
+      <div class="row">
+        <!-- Food Cards Loop -->
+        {% for food_item in data %}
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="recipe-card">
+            <div class="recipe-image {% if not food_item.image %}no-image{% endif %}">
+              {% if food_item.image %}
+                <img src="{{ food_item.image.url }}" alt="{{ food_item.name }}" loading="lazy">
+              {% endif %}
+              <span class="category-tag">Traditional</span>
+            </div>
+            <div class="recipe-content">
+              <!-- Fixed: Title and dropdown in same line -->
+              <div class="recipe-header">
+                <h3 class="recipe-title">{{ food_item.name }}</h3>
+                <div class="dots-menu-container">
+                  <div class="dropdown">
+                    <button
+                      class="btn dropdown-toggle dots-menu"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      data-bs-auto-close="true"
+                      aria-expanded="false"
+                      aria-label="More options for {{ food_item.name }}"
+                    >
+                      ⋮
+                    </button>
+                    <ul
+                      class="dropdown-menu custom-dropdown-menu"
+                    >
+                      <li>
+                        <a
+                          class="dropdown-item custom-dropdown-item"
+                          href="{% url 'historical_significance' food_item.id %}"
+                        >
+                          <i class="fas fa-book"></i> Historical Significance
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          class="dropdown-item custom-dropdown-item"
+                          href="{% url 'recipe' food_item.id %}"
+                        >
+                          <i class="fas fa-utensils"></i> Recipe & Nutrients
+                        </a>
+                      </li>
+                  
+                      <li>
+                        <a
+                          class="dropdown-item custom-dropdown-item"
+                          href="{% url 'tutorial' food_item.id %}"
+                        >
+                          <i class="fas fa-video"></i> Tutorial Video
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          class="dropdown-item custom-dropdown-item"
+                          href="{% url 'restaurant' food_item.id %}"
+                        >
+                          <i class="fas fa-store"></i> Find Restaurant
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          class="dropdown-item custom-dropdown-item"
+                          href="{% url 'online_buying' food_item.id %}"
+                        >
+                          <i class="fas fa-shopping-cart"></i> Order Online
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <p class="recipe-description">{{ food_item.short_description }}</p>
+              <div class="recipe-meta">
+                <!-- You can add additional meta information here like ratings, prep time, etc. -->
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Fixed dropdown functionality - let Bootstrap handle the dropdowns
+document.addEventListener('DOMContentLoaded', function() {
+    // Debug: Check if Bootstrap is loaded
+    if (typeof bootstrap === 'undefined') {
+        console.error('Bootstrap JavaScript is not loaded!');
+        return;
+    }
+    
+    // Handle image loading errors only
+    const images = document.querySelectorAll('.food-container .recipe-image img');
+    images.forEach(img => {
+        img.addEventListener('error', function() {
+            this.style.display = 'none';
+            this.parentElement.classList.add('no-image');
+        });
+        
+        img.addEventListener('load', function() {
+            this.parentElement.classList.remove('loading');
+        });
+    });
+    
+    // Debug: Check if dropdown elements exist
+    const dropdownElements = document.querySelectorAll('.food-container .dropdown-toggle');
+    console.log('Found dropdown elements:', dropdownElements.length);
+    
+    dropdownElements.forEach((element, index) => {
+        console.log(`Dropdown ${index}:`, element);
+        
+        // Add click event for debugging
+        element.addEventListener('click', function(e) {
+            console.log('Dropdown clicked:', this);
+            // Don't prevent default - let Bootstrap handle it
+        });
+    });
+    
+    // Debug Bootstrap dropdown events
+    document.addEventListener('show.bs.dropdown', function (e) {
+        console.log('Dropdown showing:', e.target);
+    });
+    
+    document.addEventListener('shown.bs.dropdown', function (e) {
+        console.log('Dropdown shown:', e.target);
+        if (e.target.closest('.food-container')) {
+            const dropdownMenu = e.target.nextElementSibling;
+            console.log('Dropdown menu:', dropdownMenu);
+        }
+    });
+    
+    document.addEventListener('hide.bs.dropdown', function (e) {
+        console.log('Dropdown hiding:', e.target);
+    });
+    
+    document.addEventListener('hidden.bs.dropdown', function (e) {
+        console.log('Dropdown hidden:', e.target);
+    });
+});
+</script>
+
+{% endblock content %}

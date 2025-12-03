@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+{% endblock %} 
+
+{% block content %}
+
+
+  <script>
+    window.isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+    window.loginUrl = "{% url 'log_in' %}";
+  </script>
+
+  <!-- Category Filters -->
+  <section class="p-4 flex flex-wrap justify-between items-center gap-4 bg-card">
+    <div class="flex flex-wrap gap-4">
+      <form method="get" class="flex flex-wrap gap-4">
+        <input type="hidden" name="search" value="{{ search }}">
+        <input type="hidden" name="price" value="{{ selected_price }}">
+        <button type="submit" name="category" value="all"
+          class="category-btn px-4 py-2 rounded-lg {% if selected_category == 'all' or not selected_category %}bg-primary text-white{% else %}bg-card text-text{% endif %} hover:bg-accent transition">
+          All
+        </button>
+        {% for cat in categories %}
+          <button type="submit" name="category" value="{{ cat.slug }}"
+            class="category-btn px-4 py-2 rounded-lg {% if selected_category == cat.slug %}bg-primary text-white{% else %}bg-card text-text{% endif %} hover:bg-accent hover:text-white transition">
+            {{ cat.name }}
+          </button>
+        {% endfor %}
+      </form>
+    </div>
+    
+    <!-- Rectangular Box for Wishlist, Cart (Dark Mode Toggle Removed) -->
+    <div class="souvenir-action-box animate-fade-in">
+        <!-- Wishlist -->
+        <div class="relative cursor-pointer" id="wishlistBtn">
+            <i class="fas fa-heart text-2xl"></i>
+            <span id="wishlist-count">0</span>
+        </div>
+        <!-- Cart -->
+        <div class="relative cursor-pointer" id="cartBtn">
+            <i class="fas fa-shopping-cart text-2xl"></i>
+            <span id="cart-count">0</span>
+        </div>
+    </div>
+  </section>
+
+  <!-- Price & Search -->
+  <section class="p-4 flex flex-row gap-4 items-center justify-between bg-card">
+    <div class="flex gap-2">
+        <form method="get" class="flex gap-2 items-center">
+            <input type="hidden" name="category" value="{{ selected_category }}">
+            <input type="hidden" name="search" value="{{ search }}">
+            <select name="price"
+                    class="price-dropdown px-4 py-2 rounded-lg font-semibold shadow border-2"
+                    onchange="this.form.submit()">
+                <option value="all" {% if selected_price == 'all' or not selected_price %}selected{% endif %}>All Prices</option>
+                <option value="low" {% if selected_price == 'low' %}selected{% endif %}>Under $20</option>
+                <option value="mid" {% if selected_price == 'mid' %}selected{% endif %}>$20 - $50</option>
+                <option value="high" {% if selected_price == 'high' %}selected{% endif %}>Above $50</option>
+            </select>
+        </form>
+    </div>
+    
+    <form method="get" class="flex gap-2 items-center justify-end w-full">
+        <input type="hidden" name="category" value="{{ selected_category }}">
+        <input type="hidden" name="price" value="{{ selected_price }}">
+        <input type="text" name="search" value="{{ search }}" placeholder="Search souvenirs..." class="p-2 rounded border bg-card border-accent text-text font-semibold shadow w-full md:w-1/3" />
+        <button type="submit" class="px-4 py-2 rounded bg-primary text-white hover:bg-accent transition">Filter</button>
+    </form>
+  </section>
+
+  <!-- Products -->
+    <main class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="productGrid">
+      {% for product in products %}
+      <div class="bg-card shadow-md rounded-xl overflow-hidden transition hover:shadow-xl {% if product.in_stock == 0 %}product-out-of-stock{% endif %}">
+          {% if product.in_stock == 0 %}
+              <div class="out-of-stock-badge">Out of Stock</div>
+          {% endif %}
+          
+          <!-- Product Details Menu -->
+          <div class="product-details-menu">
+              <button type="button" class="details-menu-btn" onclick="redirectToProductDetails({{ product.id }})" title="View Details">
+                  <i class="fas fa-ellipsis-v"></i>
+                  <span class="details-tooltip">Details</span>
+              </button>
+          </div>
+          
+          <img src="{% if product.image %}{{ product.image.url }}{% else %}{{ product.image_url }}{% endif %}" 
+              alt="{{ product.name }}" 
+              class="w-full h-48 object-cover">
+          
+          <div class="p-6">
+              <!-- Bestseller Badge -->
+              {% if product.bestseller %}
+              <div class="absolute top-2 left-2 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                  ⭐ Bestseller
+              </div>
+              {% endif %}
+              
+              <h3 class="text-xl font-bold mb-2 text-text">{{ product.name }}</h3>
+              <p class="text-gray-600 mb-4 text-sm">{{ product.description|truncatechars:60 }}</p>
+              
+              <!-- Pricing -->
+              <div class="flex items-center gap-2 mb-4">
+                  <span class="text-2xl font-bold text-accent">${{ product.price }}</span>
+                  {% if product.has_discount %}
+                      <span class="text-gray-500 line-through">${{ product.original_price }}</span>
+                      <span class="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold">
+                          {{ product.discount_percentage }}% OFF
+                      </span>
+                  {% endif %}
+              </div>
+              
+              <!-- Stock Info -->
+              <div class="mb-4">
+                  {% if product.in_stock > 0 %}
+                      <span class="text-green-600 text-sm font-semibold">
+                          ✓ {{ product.in_stock }} in stock
+                      </span>
+                  {% else %}
+                      <span class="text-red-600 text-sm font-semibold">
+                          ✗ Out of stock
+                      </span>
+                  {% endif %}
+              </div>
+              
+              <!-- Rating -->
+              <div class="flex items-center gap-2 mb-4">
+                  <div class="flex text-yellow-500">
+                      
+                  </div>
+                  <span class="text-sm text-gray-500" id="product-rating-{{ product.id }}">Loading...</span>
+              </div>
+              
+              <!-- Action Buttons -->
+              <div class="flex gap-2">
+                  {% if product.in_stock > 0 %}
+                      <button class="add-to-cart-btn bg-primary text-white px-4 py-2 rounded-lg font-semibold transition hover:bg-accent" 
+                              data-product-id="{{ product.id }}">
+                          <i class="fas fa-shopping-cart mr-1"></i>Cart
+                      </button>
+                      <button class="add-to-wishlist-btn bg-secondary text-text px-4 py-2 rounded-lg font-semibold transition hover:bg-accent hover:text-white" 
+                              data-product-id="{{ product.id }}">
+                          <i class="far fa-heart mr-1"></i>Wish
+                      </button>
+                  {% else %}
+                      <button class="bg-gray-400 text-gray-600 px-4 py-2 rounded-lg font-semibold cursor-not-allowed" disabled>
+                          <i class="fas fa-ban mr-1"></i>Unavailable
+                      </button>
+                      <button class="add-to-wishlist-btn bg-secondary text-text px-4 py-2 rounded-lg font-semibold transition hover:bg-accent hover:text-white" 
+                              data-product-id="{{ product.id }}">
+                          <i class="far fa-heart mr-1"></i>Wish
+                      </button>
+                  {% endif %}
+                  
+                  {% if product.purchase_url %}
+                      <a href="{{ product.purchase_url }}" target="_blank" 
+                        class="bg-accent text-white px-4 py-2 rounded-lg font-semibold transition hover:bg-primary flex items-center">
+                          <i class="fas fa-external-link-alt mr-1"></i>Buy
+                      </a>
+                  {% endif %}
+              </div>
+          </div>
+      </div>
+      {% endfor %}
+    </main>
+
+  <!-- SIDEBAR CONTAINERS START -->
+<div id="cartSidebar" class="fixed top-0 right-0 w-96 h-full bg-white shadow-lg z-50 hidden overflow-y-auto">
+  <div class="sidebar-header flex justify-between items-center">
+    <h2>Your Cart</h2>
+  </div>
+  <div id="cartSidebarContent">
+    <!-- Cart items will be dynamically loaded here -->
+  </div>
+  <button id="checkoutSidebarBtn" type="button">Place Order</button>
+</div>
+
+<div id="wishlistSidebar" class="fixed top-0 right-0 w-96 h-full bg-white shadow-lg z-50 hidden overflow-y-auto">
+  <div class="sidebar-header flex justify-between items-center">
+    <h2>Your Wishlist</h2>
+  </div>
+  <div id="wishlistSidebarContent">
+    <!-- Wishlist items will be dynamically loaded here -->
+  </div>
+</div>
+<!-- SIDEBAR CONTAINERS END -->
+
+  <script src="{% static 'js/main.js' %}"></script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+
+    // Fetch and display ratings for each product
+    {% for product in products %}
+    fetch('/souvenirs/product/{{ product.id }}/get-reviews/')
+        .then(res => res.json())
+        .then(data => {
+            const ratingElement = document.getElementById('product-rating-{{ product.id }}');
+            if (ratingElement) {
+                ratingElement.textContent = `(${data.avg_rating.toFixed(1)}/5) • ${data.review_count} review${data.review_count === 1 ? '' : 's'}`;
+            }
+        })
+        .catch(err => console.log('Rating load error for product {{ product.id }}:', err));
+    {% endfor %}
+
+
+    // External buy link handler
+    document.querySelectorAll('.view-details-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const url = btn.getAttribute('data-purchase-url');
+        if (url && url !== '#') {
+          window.open(url, '_blank');
+        }
+      });
+    });
+
+    
+    // Helper function for CSRF token
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  });
+  </script>
+
+{% endblock %}

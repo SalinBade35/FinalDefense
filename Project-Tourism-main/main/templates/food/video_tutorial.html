@@ -1,0 +1,300 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+
+<style>
+  body {
+    font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+    min-height: 100vh;
+  }
+
+  .video-tutorial-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+
+  .tutorial-card {
+    background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+    border-radius: 25px;
+    padding: 50px;
+    box-shadow: 0 8px 30px rgba(185,74,58,0.08);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #ece6df;
+    backdrop-filter: blur(10px);
+  }
+
+  .tutorial-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><g fill="%23e2b07b" fill-opacity="0.03"><circle cx="3" cy="3" r="1"/><circle cx="13" cy="13" r="1"/></g></svg>');
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .tutorial-card > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  .tutorial-title {
+    font-size: 2.5rem;
+    color: #6c2e22;
+    margin-bottom: 15px;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(108,46,34,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    position: relative;
+    padding-bottom: 20px;
+  }
+
+  .tutorial-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(135deg, #b94a3a 0%, #e2b07b 100%);
+    border-radius: 2px;
+  }
+
+  .tutorial-emoji {
+    font-size: 2.8rem;
+    filter: drop-shadow(0 2px 4px rgba(185,74,58,0.15));
+  }
+
+  .tutorial-description {
+    font-size: 1.2rem;
+    color: #8c7c6b;
+    margin-bottom: 35px;
+    line-height: 1.6;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 500;
+  }
+
+  .tutorial-description strong {
+    color: #6c2e22;
+    font-weight: 700;
+    background: linear-gradient(120deg, #f3c892 0%, #e2b07b 100%);
+    padding: 2px 8px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(185,74,58,0.08);
+  }
+
+  .video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(185,74,58,0.15);
+    border: 3px solid #e2b07b;
+    background: linear-gradient(135deg, #ece6df 0%, #f3c892 100%);
+    transition: all 0.3s ease;
+  }
+
+  .video-wrapper:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(185,74,58,0.2);
+    border-color: #b94a3a;
+  }
+
+  .video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 17px;
+  }
+
+  .tutorial-note {
+    margin-top: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+    border-radius: 15px;
+    border-left: 5px solid #b94a3a;
+    color: #6c2e22;
+    font-style: italic;
+    font-size: 1rem;
+    line-height: 1.6;
+    box-shadow: 0 4px 15px rgba(185,74,58,0.05);
+  }
+
+  .back-button {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    background: linear-gradient(135deg, #e2b07b 0%, #f3c892 100%);
+    color: #6c2e22;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(185,74,58,0.08);
+    border: 2px solid #b94a3a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .back-button:hover {
+    background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(185,74,58,0.15);
+  }
+
+  .loading-placeholder {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #b94a3a;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  /* Enhanced mobile responsiveness */
+  @media (max-width: 768px) {
+    .video-tutorial-container {
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+
+    .tutorial-card {
+      padding: 30px 25px;
+      border-radius: 20px;
+    }
+
+    .tutorial-title {
+      font-size: 2rem;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tutorial-emoji {
+      font-size: 2.5rem;
+    }
+
+    .tutorial-description {
+      font-size: 1.1rem;
+      margin-bottom: 25px;
+    }
+
+    .video-wrapper {
+      border-radius: 15px;
+      border-width: 2px;
+    }
+
+    .video-wrapper iframe {
+      border-radius: 13px;
+    }
+
+    .back-button {
+      position: static;
+      margin-bottom: 20px;
+      align-self: flex-start;
+      font-size: 0.9rem;
+      padding: 8px 16px;
+    }
+
+    .tutorial-note {
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 0.95rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .tutorial-card {
+      padding: 25px 20px;
+    }
+
+    .tutorial-title {
+      font-size: 1.8rem;
+    }
+
+    .tutorial-description {
+      font-size: 1rem;
+    }
+
+    .back-button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Animation for card entrance */
+  .tutorial-card {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<div class="video-tutorial-container">
+  <div class="tutorial-card">
+    <a href="javascript:history.back()" class="back-button">
+      <i class="fas fa-arrow-left"></i>
+      Back
+    </a>
+
+    <h2 class="tutorial-title">
+      <span class="tutorial-emoji">🍽</span>
+      Cooking Tutorial
+    </h2>
+
+    <p class="tutorial-description">
+      Watch how to prepare <strong>{{ food.name }}</strong> step by step.
+    </p>
+
+    <div class="video-wrapper">
+      <div class="loading-placeholder">
+        <i class="fas fa-spinner fa-spin"></i>
+        Loading video...
+      </div>
+      <iframe
+        src="{{ food.tutorial_video_url }}"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+        onload="document.querySelector('.loading-placeholder').style.display='none'"
+      >
+      </iframe>
+    </div>
+
+    <div class="tutorial-note">
+      <i class="fas fa-info-circle" style="color: #b94a3a; margin-right: 8px;"></i>
+      Enjoy learning how to cook this traditional dish! Follow along at your own pace.
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

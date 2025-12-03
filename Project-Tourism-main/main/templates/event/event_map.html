@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .image-placeholder img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .main-image {
+        height: 530px;
+        object-fit: cover;
+    }
+
+    .side-image {
+        height: 256px;
+        object-fit: cover;
+    }
+
+    .back-link {
+        color: #dc3545;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .back-link:hover {
+        color: #b02a37;
+        text-decoration: none;
+    }
+
+    .location-text {
+        color: #6c757d;
+        font-size: 0.95rem;
+    }
+
+    .btn-outline-danger {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .site-detail-container {
+        padding: 20px 0;
+    }
+
+    .site-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 2px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        padding: 60px;
+        margin: 10px auto;
+        max-width: 1200px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .site-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 30px;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .tab-navigation {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+        background: rgba(52, 73, 94, 0.05);
+        border-radius: 5px;
+    }
+
+    .tab-btn {
+        background: transparent;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 3px;
+        font-weight: 600;
+        color: #5e4334;
+        cursor: pointer;
+        transition: 0.3s ease;
+        font-size: 1rem;
+    }
+
+    .tab-btn:hover {
+        background: rgba(52, 73, 94, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .tab-btn.active {
+        background: #a83c32;
+        color: white;
+        box-shadow: 0 8px 16px rgba(234, 150, 102, 0.3);
+    }
+
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.5s ease-in-out;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 2px;
+        padding: 30px;
+        border-left: 5px solid #ea9066;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        margin-top: 20px;
+    }
+
+    .tab-content.active-tab {
+        display: block;
+    }
+
+    .tab-content h3 {
+        color: #50302c;
+        font-weight: 600;
+        margin-bottom: 20px;
+        font-size: 1.8rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+    }
+
+    .tab-content p {
+        color: #555;
+        line-height: 1.8;
+        font-size: 1.1rem;
+        text-align: justify;
+    }
+
+    .tab-icon {
+        font-size: 1.5rem;
+        color: #e7c8a2;
+        margin-right: 10px;
+    }
+
+    #map-container, #maps-container {
+        height: 400px;
+        width: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Form styles for directions */
+    .directions-form {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 8px;
+        border-left: 4px solid #ea9066;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #50302c;
+    }
+    
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e7c8a2;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .form-group input:focus, .form-group select:focus {
+        outline: none;
+        border-color: #a83c32;
+        box-shadow: 0 0 10px rgba(168, 60, 50, 0.1);
+    }
+    
+    .get-directions-btn {
+        background: linear-gradient(45deg, #a83c32, #ea9066);
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(168, 60, 50, 0.3);
+        width: 100%;
+    }
+    
+    .get-directions-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(168, 60, 50, 0.4);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .site-card {
+            padding: 20px;
+        }
+
+        .site-title {
+            font-size: 2rem;
+        }
+
+        .tab-btn {
+            width: 100%;
+            text-align: center;
+            margin: 4px 0;
+        }
+
+        .tab-content {
+            padding: 20px;
+        }
+
+        .tab-content h3 {
+            font-size: 1.4rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+    }
+</style>
+
+
+<!-- Maps and Directions Tabs Section -->
+<div class="site-detail-container">
+    <div class="container">
+        <div class="site-card">
+            <h1 class="site-title">Map & Directions</h1>
+            <div class="tab-navigation">
+                <button class="tab-btn active" onclick="openMapTab('maps')"><i class="fas fa-map tab-icon"></i>Map</button>
+                <button class="tab-btn" onclick="openMapTab('direction')"><i class="fas fa-route tab-icon"></i>Directions</button>
+            </div>
+
+            <div id="maps" class="tab-content active-tab map-tab">
+                <h3>
+                    <span><i class="fas fa-map tab-icon"></i>Location Map</span>
+                </h3>
+                {% if has_location %}
+                    <div id="map-container"></div>
+                {% else %}
+                    <div class="text-center p-4">
+                        <p class="text-muted">Location information not available for this event.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div id="direction" class="tab-content map-tab">
+                <h3>
+                    <span><i class="fas fa-route tab-icon"></i>Get Directions</span>
+                </h3>
+                {% if has_location %}
+                    <div class="directions-form">
+                        <form method="POST" action="{% url 'get_event_directions' event.id %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="start-address">
+                                    <i class="fas fa-map-marker-alt me-2"></i>Starting Point:
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="start-address" 
+                                    name="start_address"
+                                    placeholder="Enter your starting address"
+                                    required
+                                />
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="travel-mode">
+                                    <i class="fas fa-car me-2"></i>Travel Mode:
+                                </label>
+                                <select id="travel-mode" name="travel_mode">
+                                    <option value="car">🚗 Car</option>
+                                    <option value="bike">🚲 Bike</option>
+                                    <option value="foot">🚶 Walking</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="get-directions-btn">
+                                <i class="fas fa-directions me-2"></i>Get Directions
+                            </button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="text-center p-4">
+                        <p class="text-muted">Location information not available for this event.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% if has_location %}
+    {{ has_location|json_script:"location-data" }}
+    {{ map_style_url|json_script:"map-style-data" }}
+    {{ coordinates|json_script:"coordinates-data" }}
+{% endif %}
+
+<script>
+    document.getElementById('maps').classList.add("active-tab");
+    document.getElementsByClassName('tab-btn')[0].classList.add("active");
+
+// Maps and directions tabs functionality
+// Replace your openMapTab function with this corrected version:
+
+function openMapTab(tabName) {
+    // Hide all map tab contents
+    const mapTabContents = document.getElementsByClassName('map-tab');
+    for (let i = 0; i < mapTabContents.length; i++) {
+        mapTabContents[i].classList.remove("active-tab");
+    }
+    
+    // Remove active class from all map tab buttons
+    const mapTabButtons = document.querySelectorAll('.tab-btn');
+    for (let i = 0; i < mapTabButtons.length; i++) {
+        mapTabButtons[i].classList.remove("active");
+    }
+    
+    // Show selected tab content and activate button
+    document.getElementById(tabName).classList.add("active-tab");
+    event.currentTarget.classList.add("active");
+}
+var hasLocation = JSON.parse(document.getElementById('location-data').textContent);
+var mapStyleUrl = JSON.parse(document.getElementById('map-style-data').textContent);
+var coordinates = JSON.parse(document.getElementById('coordinates-data').textContent);
+
+// Initialize main map
+var map = new mapboxgl.Map({
+    container: "map-container",
+    style: mapStyleUrl,
+    center: [coordinates.lon, coordinates.lat],
+    zoom: 14,
+    attributionControl: false
+});
+
+new mapboxgl.Marker()
+    .setLngLat([coordinates.lon, coordinates.lat])
+    .addTo(map);
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+</script>
+{% endblock content %}

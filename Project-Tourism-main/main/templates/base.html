@@ -1,0 +1,362 @@
+<!-- this is base.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    {% block title %} {% endblock title %}
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
+      crossorigin="anonymous"
+    />
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css?family=Dancing+Script:400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+
+    <!-- For maps -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
+
+    <!-- alertify js -->
+     
+    <!-- JavaScript -->
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/alertify.min.css"/>
+    <!-- Default theme -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/default.min.css"/>
+    <!-- Semantic UI theme -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/semantic.min.css"/>
+
+    {% block extra_css %}{% endblock %}
+
+    <!-- Base CSS LAST so it wins over page styles -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+  </head>
+  <body>
+    <!-- Navigation Bar (locked style) -->
+    <nav id="app-navbar" class="app-nav navbar navbar-expand-lg" >
+      <div class="container-fluid">
+        <div class="logo-container">
+          <div class="logo-circle"></div>
+          <a class="navbar-brand" href="#">HBHK</a>
+        </div>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+          <ul class="navbar-nav mx-auto">
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/' %} active {% endif %}" href="{% url 'index' %}">
+                <i class="fas fa-home"></i> Home
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/sites/' %} active {% endif %}" href="{% url 'sites' %}">
+                <i class="fas fa-landmark"></i> Sites
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/listoffood/' %} active {% endif %}" href="{% url 'listoffood' %}">
+                <i class="fas fa-utensils"></i> Foods & Drinks
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/events/' %} active {% endif %}" href="{% url 'events' %}">
+                <i class="far fa-calendar-alt"></i> Events
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/souvenirs/' %} active {% endif %}" href="{% url 'souvenirs:souvenir_list' %}">
+                <i class="fas fa-gift"></i> Souvenirs
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/tourism_services/' %} active {% endif %}" href="{% url 'tourism_services' %}">
+                <i class="fa-regular fa-map"></i> Tourism Services
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/weather/' %} active {% endif %}" href="{% url 'weather' %}">
+                <i class="fas fa-cloud-sun"></i> Weather
+              </a>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="blogsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-book-open"></i> Blogs
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="blogsDropdown">
+                <li><a class="dropdown-item" href="{% url 'community' %}">Share Experience</a></li>
+                <li><a class="dropdown-item" href="{% url 'contribution' %}">Contribute</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        {% if user.is_authenticated %}
+          <div class="auth-buttons">
+            <a href="{% url 'log_out' %}" class="auth-btn-register">Logout</a>
+          </div>
+        {% else %}
+          <div class="auth-buttons">
+            <a href="{% url 'log_in' %}" class="auth-btn-login">Login</a>
+            <a href="{% url 'register' %}" class="auth-btn-register">Register</a>
+          </div>
+        {% endif %}
+
+        <div class="nav-icons">
+          <a href="{% url 'user_profile' %}" class="icon-link"><i class="fas fa-user"></i></a>
+          <a href="{% url 'view_wishlist' %}" class="icon-link"><i class="fas fa-heart"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    {% block content %}{% endblock content %}
+
+    <!-- Footer (locked style) -->
+    <footer id="app-footer" class="app-footer site-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-3">
+            <h5>Quick Links</h5>
+            <ul class="footer-links">
+              <li><a href="{% url 'index' %}">Home</a></li>
+              <li><a href="{% url 'sites' %}">Sites</a></li>
+              <li><a href="{% url 'listoffood' %}">Foods & Drinks</a></li>
+              <li><a href="{% url 'events' %}">Events</a></li>
+              <li><a href="{% url 'tourism_services' %}">Tourism Services</a></li>
+            </ul>
+          </div>
+
+          <div class="col-md-6 footer-center">
+            <div class="footer-logo-container">
+              <div class="footer-logo">HB</div>
+              <h3>HBHK</h3>
+              <p>Your gateway to experiencing the cultural richness of Bhaktapur, Nepal.</p>
+            </div>
+            <div class="social-icons">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+          </div>
+
+          <div class="col-md-1"></div>
+
+          <div class="col-md-2">
+            <h5 class="mb-3">Legals</h5>
+            <ul class="footer-links">
+              <li><a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms & Conditions</a></li>
+              <li><a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a></li>
+              <li><a href="#" data-bs-toggle="modal" data-bs-target="#supportModal">Support</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; 2025 All Rights Reserved</p>
+        </div>
+      </div>
+    </footer>
+ 
+     <!-- Terms & Conditions Modal -->
+     <div class="modal fade terms-modal" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+       <div class="modal-dialog modal-dialog-centered modal-lg">
+         <div class="modal-content">
+           <div class="modal-header">
+             <div class="modal-title-wrap">
+               <h5 class="modal-title" id="termsModalLabel">Terms &amp; Conditions</h5>
+               <p class="modal-subtitle">Please read these terms carefully before using HBHK</p>
+             </div>
+             <button type="button" class="btn-close terms-close" data-bs-dismiss="modal" aria-label="Close"></button>
+           </div>
+           <div class="modal-body">
+             <section class="terms-body">
+               <h6>1. Acceptance of Terms</h6>
+               <p>By accessing or using this website, you agree to be bound by these Terms &amp; Conditions. If you do not agree, please do not use the site.</p>
+ 
+               <h6>2. Use of Content</h6>
+               <p>All content, including text, images, videos, and graphics on this website is provided for informational purposes only. You may not reproduce, distribute, or modify any content without prior written permission from HBHK.</p>
+ 
+               <h6>3. User Conduct</h6>
+               <p>Users must not post illegal, offensive, defamatory, or infringing material. We reserve the right to remove any content that violates these policies and may suspend or terminate user accounts without prior notice.</p>
+ 
+               <h6>4. Intellectual Property</h6>
+               <p>All trademarks, logos, and service marks displayed on this website are the property of HBHK or their respective owners. Unauthorized use is strictly prohibited.</p>
+
+               <h6>5. Limitation of Liability</h6>
+               <p>HBHK provides information on a best-effort basis. We are not liable for any direct, indirect, incidental, or consequential damages arising from the use of this website or reliance on its content.</p>
+
+               <h6>6. External Links</h6>
+               <p>This website may contain links to third-party websites. We are not responsible for the content or practices of these external sites.</p>
+
+               <h6>7. Changes to Terms</h6>
+               <p>We may modify these terms at any time. Continued use of the website after changes constitutes acceptance of the updated terms. We recommend reviewing this page periodically.</p>
+ 
+               <div class="terms-actions">
+                 <button type="button" class="btn btn-terra" data-bs-dismiss="modal">I Understand</button>
+               </div>
+             </section>
+           </div>
+         </div>
+       </div>
+     </div>
+
+     <!-- Privacy Policy Modal -->
+     <div class="modal fade terms-modal" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+       <div class="modal-dialog modal-dialog-centered modal-lg">
+         <div class="modal-content">
+           <div class="modal-header">
+             <div class="modal-title-wrap">
+               <h5 class="modal-title" id="privacyModalLabel">Privacy Policy</h5>
+               <p class="modal-subtitle">Your privacy is important to us</p>
+             </div>
+             <button type="button" class="btn-close terms-close" data-bs-dismiss="modal" aria-label="Close"></button>
+           </div>
+           <div class="modal-body">
+             <section class="terms-body">
+               <h6>1. Information We Collect</h6>
+               <p>We collect information you provide directly to us, such as when you create an account, post content, or contact us. This may include your name, email address, and any other information you choose to provide.</p>
+ 
+               <h6>2. How We Use Your Information</h6>
+               <p>We use the information we collect to provide, maintain, and improve our services, to communicate with you, and to personalize your experience on HBHK.</p>
+ 
+               <h6>3. Information Sharing</h6>
+               <p>We do not sell, trade, or rent your personal information to third parties. We may share your information only in the following circumstances: with your consent, to comply with legal obligations, or to protect our rights and safety.</p>
+ 
+               <h6>4. Cookies and Tracking</h6>
+               <p>We use cookies and similar tracking technologies to collect information about your browsing activities. You can control cookies through your browser settings, but disabling them may affect website functionality.</p>
+
+               <h6>5. Data Security</h6>
+               <p>We implement reasonable security measures to protect your personal information from unauthorized access, alteration, or destruction. However, no method of transmission over the internet is 100% secure.</p>
+
+               <h6>6. Your Rights</h6>
+               <p>You have the right to access, update, or delete your personal information. You may also opt out of marketing communications at any time. Contact us to exercise these rights.</p>
+
+               <h6>7. Children's Privacy</h6>
+               <p>Our website is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13.</p>
+
+               <h6>8. Changes to Privacy Policy</h6>
+               <p>We may update this Privacy Policy from time to time. We will notify you of any significant changes by posting the new policy on this page with an updated effective date.</p>
+
+               <h6>9. Contact Us</h6>
+               <p>If you have any questions about this Privacy Policy, please contact us at privacy@hbhk.com or through our Support page.</p>
+ 
+               <div class="terms-actions">
+                 <button type="button" class="btn btn-terra" data-bs-dismiss="modal">Got It</button>
+               </div>
+             </section>
+           </div>
+         </div>
+       </div>
+     </div>
+
+     <!-- Support Modal -->
+     <div class="modal fade terms-modal" id="supportModal" tabindex="-1" aria-labelledby="supportModalLabel" aria-hidden="true">
+       <div class="modal-dialog modal-dialog-centered modal-lg">
+         <div class="modal-content">
+           <div class="modal-header">
+             <div class="modal-title-wrap">
+               <h5 class="modal-title" id="supportModalLabel">Support & Help Center</h5>
+               <p class="modal-subtitle">We're here to help you</p>
+             </div>
+             <button type="button" class="btn-close terms-close" data-bs-dismiss="modal" aria-label="Close"></button>
+           </div>
+           <div class="modal-body">
+             <section class="terms-body">
+               <h6><i class="fas fa-question-circle"></i> Frequently Asked Questions</h6>
+               <p><strong>Q: How do I create an account?</strong><br>
+               A: Click the "Register" button in the navigation bar and fill out the registration form with your details.</p>
+               
+               <p><strong>Q: How can I book tourism services?</strong><br>
+               A: Navigate to the Tourism Services section, browse available services, and follow the booking instructions provided.</p>
+
+               <p><strong>Q: Can I contribute content to the website?</strong><br>
+               A: Yes! Visit the "Contribute" page under the Blogs menu to share your experiences and knowledge about Bhaktapur.</p>
+ 
+               <h6><i class="fas fa-envelope"></i> Contact Support</h6>
+               <p>If you need further assistance, please reach out to us:</p>
+               <ul class="support-contact-list">
+                 <li><strong>Email:</strong> support@hbhk.com</li>
+                 <li><strong>Phone:</strong> +977-1-234-5678</li>
+                 <li><strong>Office Hours:</strong> Sunday - Friday, 9:00 AM - 5:00 PM (Nepal Time)</li>
+                 <li><strong>Address:</strong> Bhaktapur Durbar Square, Bhaktapur, Nepal</li>
+               </ul>
+
+               <h6><i class="fas fa-life-ring"></i> Technical Issues</h6>
+               <p>Experiencing technical difficulties? Try these steps:</p>
+               <ul class="support-contact-list">
+                 <li>Clear your browser cache and cookies</li>
+                 <li>Try a different web browser</li>
+                 <li>Ensure your internet connection is stable</li>
+                 <li>Contact our technical support team if the issue persists</li>
+               </ul>
+
+               <h6><i class="fas fa-comments"></i> Feedback</h6>
+               <p>We value your feedback! Help us improve HBHK by sharing your suggestions and comments at feedback@hbhk.com</p>
+
+               <h6><i class="fas fa-shield-alt"></i> Report an Issue</h6>
+               <p>Found inappropriate content or a bug? Report it immediately to report@hbhk.com and our team will investigate promptly.</p>
+ 
+               <div class="terms-actions">
+                 <button type="button" class="btn btn-terra" data-bs-dismiss="modal">Close</button>
+               </div>
+             </section>
+           </div>
+         </div>
+       </div>
+     </div>
+
+    <!-- chatbot js starts -->
+     <script type="text/javascript">
+    (function(d, m){
+        var kommunicateSettings = 
+            {"appId":"14acd1130a172fe777dd475bd8ba7152a","popupWidget":true,"automaticChatOpenOnNavigation":true};
+        var s = document.createElement("script"); s.type = "text/javascript"; s.async = true;
+        s.src = "https://widget.kommunicate.io/v2/kommunicate.app";
+        var h = document.getElementsByTagName("head")[0]; h.appendChild(s);
+        window.kommunicate = m; m._globals = kommunicateSettings;
+    })(document, window.kommunicate || {});
+/* NOTE : Use web server to view HTML files as real-time update will not work if you directly open the HTML file in the browser. */
+
+
+</script>
+    <!-- chatbot js ends -->
+     
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+<!-- alertify js -->
+{% if messages %}
+    {% for message in messages %}
+    <script>
+    alertify.set('notifier','position','bottom-center');
+        if ("{{ message.tags }}" === "error") {
+            alertify.error("{{ message|escapejs }}");
+        } else {
+            alertify.success("{{ message|escapejs }}");
+        }
+    </script>
+    {% endfor %}
+{% endif %}
+
+  </body>
+</html>

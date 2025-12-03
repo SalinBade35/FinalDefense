@@ -1,0 +1,209 @@
+
+{% load static %}
+
+{% block title %}
+<title>User Profile - Bhaktapur Heritage</title>
+{% endblock title %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #f5f3e9;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    .profile-wrapper {
+        max-width: 800px;
+        margin: 60px auto;
+        padding: 0 20px;
+    }
+
+    .profile-header {
+        background: linear-gradient(135deg, #a83c32 0%, #8c3a2b 100%);
+        border-radius: 12px;
+        padding: 40px;
+        text-align: center;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(168, 60, 50, 0.15);
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        background: #e8cba8;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 36px;
+        border: 3px solid white;
+    }
+
+    .profile-name {
+        font-size: 28px;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 5px;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    .profile-username {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 15px;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(168, 60, 50, 0.1);
+    }
+
+    .card-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #3a2618;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(168, 60, 50, 0.1);
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        color: #666;
+        font-size: 14px;
+        font-weight: 500;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    .info-value {
+        color: #3a2618;
+        font-size: 14px;
+        font-weight: 600;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    .btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .btn {
+        padding: 12px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #a83c32 0%, #8c3a2b 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #a83c32;
+        border: 2px solid #a83c32;
+    }
+
+    .btn-secondary:hover {
+        background: #a83c32;
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .profile-wrapper {
+            margin: 30px auto;
+        }
+
+        .profile-header {
+            padding: 30px 20px;
+        }
+
+        .profile-card {
+            padding: 20px;
+        }
+
+        .btn-group {
+            grid-template-columns: 1fr;
+        }
+
+        .info-row {
+            flex-direction: column;
+            gap: 5px;
+        }
+    }
+</style>
+
+<div class="profile-wrapper">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-avatar">👤</div>
+        <h1 class="profile-name">{{ user.get_full_name|default:user.username }}</h1>
+        <p class="profile-username">@{{ user.username }}</p>
+    </div>
+
+    <!-- Personal Information -->
+    <div class="profile-card">
+        <h2 class="card-title">Personal Information</h2>
+        <div class="info-row">
+            <span class="info-label">Full Name</span>
+            <span class="info-value">{{ user.get_full_name|default:"Not provided" }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Username</span>
+            <span class="info-value">{{ user.username }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ user.email }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Member Since</span>
+            <span class="info-value">{{ user.date_joined|date:"F d, Y" }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Last Login</span>
+            <span class="info-value">{{ user.last_login|date:"F d, Y" }}</span>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="profile-card">
+        <h2 class="card-title">Account Settings</h2>
+        <div class="btn-group">
+            <a href="{% url 'change_password' %}" class="btn btn-primary">Change Password</a>
+            <a href="{% url 'index' %}" class="btn btn-secondary">Back to Home</a>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

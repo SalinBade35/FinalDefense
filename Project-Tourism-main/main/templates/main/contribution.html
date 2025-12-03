@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load static %}
+
+{% block title %}
+  <title>Contribution - Heritage Hub</title>
+{% endblock title %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/contribution.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+{% endblock extra_css %}
+
+{% block content %}
+
+<!-- Floating Sidebar Toggle Button -->
+<button class="sidebar-toggle" id="open-contribution-sidebar" aria-haspopup="dialog" aria-controls="contribution-sidebar">
+  <i class="fas fa-hands-helping"></i>
+  <span class="sidebar-toggle-text">Contribute Knowledge</span>
+</button>
+
+<!-- Overlay -->
+<div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+
+<!-- Slide-out Sidebar -->
+<aside class="contribution-sidebar" id="contribution-sidebar" role="dialog" aria-modal="true" aria-labelledby="contribution-sidebar-title" aria-hidden="true">
+  <div class="sidebar-header">
+    <h2 id="contribution-sidebar-title">Contribute to Heritage Hub</h2>
+    <button class="sidebar-close" id="close-contribution-sidebar" aria-label="Close contribution form">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="sidebar-body">
+    <div class="contribution-form-container sidebar-form-container">
+      <div class="form-header">
+        <div class="form-icon">
+          <i class="fas fa-hands-helping"></i>
+        </div>
+        <p class="form-subtitle">Share your knowledge and help preserve our cultural heritage</p>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data" action="{% url 'contribution' %}" class="contribution-form" id="sidebar-contribution-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+          <div class="input-wrapper">
+            <i class="fas fa-heading input-icon"></i>
+            <input type="text" name="title" class="form-input" id="title" placeholder=" " required>
+            <label for="title" class="form-label">Contribution Title</label>
+            <div class="input-line"></div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <div class="textarea-wrapper">
+            <i class="fas fa-edit input-icon"></i>
+            <textarea name="content" class="form-textarea" id="content" placeholder=" " rows="5" required></textarea>
+            <label for="content" class="form-label">Share Your Knowledge</label>
+            <div class="input-line"></div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <div class="select-wrapper">
+            <i class="fas fa-landmark input-icon"></i>
+            <select name="associated_site" class="form-select" id="associated_site" required>
+              <option value="">Select a heritage site</option>
+              {% for site in sites %}
+                <option value="{{ site.id }}">{{ site.name }}</option>
+              {% endfor %}
+            </select>
+            <div class="select-arrow">
+              <i class="fas fa-chevron-down"></i>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <div class="file-upload-wrapper">
+            <input type="file" name="media" class="file-input" id="file-upload" accept="image/*,video/*">
+            <label for="file-upload" class="file-label">
+              <div class="file-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+              </div>
+              <div class="file-text">
+                <span class="file-title">Upload Media</span>
+                <span class="file-subtitle">Click to select</span>
+              </div>
+            </label>
+            <div class="file-info">
+              <i class="fas fa-info-circle"></i>
+              Optional: JPG, PNG, MP4 (Max 10MB)
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <div class="input-wrapper">
+            <i class="fas fa-external-link-alt input-icon"></i>
+            <input type="url" name="source" class="form-input" id="source" placeholder=" ">
+            <label for="source" class="form-label">Source URL (Optional)</label>
+            <div class="input-line"></div>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">
+            <span class="btn-text">Submit Contribution</span>
+            <i class="fas fa-paper-plane btn-icon"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</aside>
+
+<!-- Enhanced Content Section -->
+<div class="container-fluid px-4 mt-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-10 col-xl-8">
+      
+      <!-- Contributions Feed Header -->
+      <div class="feed-header">
+        <div class="feed-title-wrapper">
+          <h3 class="feed-title">
+            <span class="title-icon">📚</span>
+            Community Contributions
+          </h3>
+          <p class="feed-subtitle">Discover knowledge shared by heritage enthusiasts</p>
+        </div>
+        <div class="feed-stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ contributions|length }}</span>
+            <span class="stat-label">Contributions</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contributions Feed -->
+      <div class="contributions-feed">
+        {% for post in contributions %}
+        <article class="contribution-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:100 }}">
+          <div class="card-gradient"></div>
+          
+          <!-- User Profile Header -->
+          <div class="user-profile">
+            <div class="user-info">
+              <div class="user-avatar">
+                <img src="https://ui-avatars.com/api/?name={{ post.contributor.username }}&background=random&color=fff&size=50" 
+                     alt="{{ post.contributor.username }}" class="avatar-img">
+                <div class="avatar-status"></div>
+              </div>
+              <div class="user-details">
+                <h6 class="username">{{ post.contributor.username }}</h6>
+                <span class="post-time">
+                  <i class="fas fa-clock"></i>
+                  {{ post.created_at|naturaltime }}
+                </span>
+              </div>
+            </div>
+            
+            {% if post.verified %}
+            <div class="verified-badge">
+              <i class="fas fa-badge-check"></i>
+              <span>Verified</span>
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Contribution Content -->
+          <div class="contribution-content">
+            <h4 class="contribution-title">{{ post.title }}</h4>
+            <div class="contribution-text">{{ post.content|linebreaks }}</div>
+            
+            <!-- Associated Site Info -->
+            <div class="site-info">
+              <div class="site-badge">
+                <i class="fas fa-landmark"></i>
+                <span>{{ post.associated_site.name }}</span>
+              </div>
+            </div>
+            
+            <!-- Media Display -->
+            {% if post.media %}
+            <div class="media-showcase">
+              {% if ".mp4" in post.media.url %}
+                <video controls class="contribution-video">
+                  <source src="{{ post.media.url }}" type="video/mp4">
+                  Your browser does not support video playback.
+                </video>
+              {% else %}
+                <img src="{{ post.media.url }}" 
+                     class="contribution-image"
+                     alt="Media from {{ post.title }}"
+                     loading="lazy">
+              {% endif %}
+              <div class="media-overlay">
+                <button class="media-fullscreen">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+            </div>
+            {% endif %}
+
+            <!-- Source Reference -->
+            {% if post.source %}
+            <div class="source-reference">
+              <div class="source-content">
+                <i class="fas fa-external-link-alt"></i>
+                <span>Source:</span>
+                <a href="{{ post.source }}" target="_blank" rel="noopener">
+                  {{ post.source|truncatechars:50 }}
+                  <i class="fas fa-arrow-up-right-from-square"></i>
+                </a>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          
+        </article>
+        {% empty %}
+        
+        <!-- Empty State -->
+        <div class="empty-contributions">
+          <div class="empty-illustration">
+            <div class="empty-icon">
+              <i class="fas fa-book-open"></i>
+            </div>
+            <div class="empty-stars">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+          </div>
+          <h4 class="empty-title">No Contributions Yet</h4>
+          <p class="empty-message">Be the first to share your knowledge and contribute to preserving our heritage!</p>
+          <button class="empty-cta" onclick="document.getElementById('open-contribution-sidebar').click()">
+            <i class="fas fa-plus"></i>
+            Make a Contribution
+          </button>
+        </div>
+        
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar JavaScript -->
+<script>
+  (function() {
+    const openBtn = document.getElementById('open-contribution-sidebar');
+    const closeBtn = document.getElementById('close-contribution-sidebar');
+    const sidebar = document.getElementById('contribution-sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    
+    function openSidebar() {
+      sidebar.classList.add('open');
+      overlay.classList.add('visible');
+      sidebar.setAttribute('aria-hidden', 'false');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      
+      // Focus first input
+      const firstInput = sidebar.querySelector('input[type="text"]');
+      if (firstInput) {
+        setTimeout(() => firstInput.focus(), 300);
+      }
+    }
+    
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('visible');
+      sidebar.setAttribute('aria-hidden', 'true');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      openBtn.focus();
+    }
+    
+    openBtn.addEventListener('click', openSidebar);
+    closeBtn.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+    
+    // Escape key to close
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+        closeSidebar();
+      }
+    });
+  })();
+</script>
+
+{% endblock content %}

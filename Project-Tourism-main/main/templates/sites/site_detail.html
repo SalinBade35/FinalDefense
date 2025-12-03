@@ -1,0 +1,652 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Inter', 'Arial', sans-serif;
+        background: linear-gradient(135deg, #f5ede6 0%, #ece6df 100%);
+        min-height: 100vh;
+    }
+
+    .image-placeholder img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(185,74,58,0.08);
+        transition: transform 0.3s ease;
+    }
+
+    .image-placeholder img:hover {
+        transform: scale(1.02);
+    }
+
+    .main-image {
+        height: 530px;
+        object-fit: cover;
+    }
+
+    .side-image {
+        height: 256px;
+        object-fit: cover;
+    }
+
+    .back-link {
+        color: #b94a3a;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: #fffaf6;
+        border-radius: 25px;
+        border: 2px solid #e2b07b;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(185,74,58,0.08);
+    }
+
+    .back-link:hover {
+        background: #b94a3a;
+        color: #fff;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(185,74,58,0.15);
+    }
+
+    .location-text {
+        color: #8c7c6b;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .btn-outline-danger {
+        border-color: #b94a3a;
+        color: #b94a3a;
+        background: #fffaf6;
+        font-weight: 600;
+        border-radius: 25px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(185,74,58,0.08);
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #b94a3a;
+        border-color: #b94a3a;
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(185,74,58,0.15);
+    }
+
+    .site-detail-container {
+        padding: 40px 0;
+    }
+
+    .site-card {
+        background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(185,74,58,0.08);
+        padding: 60px;
+        margin: 20px auto;
+        max-width: 1200px;
+        border: 1px solid #ece6df;
+        backdrop-filter: blur(10px);
+    }
+
+    .site-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #6c2e22;
+        text-align: center;
+        margin-bottom: 30px;
+        text-shadow: 1px 1px 3px rgba(108,46,34,0.1);
+        position: relative;
+        padding-bottom: 20px;
+    }
+
+    .site-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(135deg, #b94a3a 0%, #e2b07b 100%);
+        border-radius: 2px;
+    }
+
+    .tab-navigation {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+        background: #ece6df;
+        border-radius: 15px;
+        padding: 8px;
+        box-shadow: inset 0 2px 4px rgba(185,74,58,0.05);
+    }
+
+    .tab-btn {
+        background: transparent;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        color: #6c2e22;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        margin: 2px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .tab-btn:hover {
+        background: #e2b07b;
+        color: #6c2e22;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(226,176,123,0.25);
+    }
+
+    .tab-btn.active {
+        background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(185,74,58,0.25);
+        transform: translateY(-1px);
+    }
+
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.5s ease-in-out;
+        background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+        border-radius: 15px;
+        padding: 30px;
+        border-left: 5px solid #b94a3a;
+        box-shadow: 0 4px 20px rgba(185,74,58,0.08);
+        margin-top: 20px;
+        border: 1px solid #ece6df;
+    }
+
+    .tab-content.active-tab {
+        display: block;
+    }
+
+    .tab-content h3 {
+        color: #6c2e22;
+        font-weight: 600;
+        margin-bottom: 20px;
+        font-size: 1.8rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #ece6df;
+        padding-bottom: 15px;
+    }
+
+    .tab-content p {
+        color: #3d2c22;
+        line-height: 1.8;
+        font-size: 1.1rem;
+        text-align: justify;
+        margin-bottom: 0;
+    }
+
+    .tab-icon {
+        font-size: 1.2rem;
+        color: #e2b07b;
+        margin-right: 8px;
+    }
+
+    .tab-btn.active .tab-icon {
+        color: #fff;
+    }
+
+    #map-container, #maps-container {
+        height: 400px;
+        width: 100%;
+        border-radius: 15px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 4px 20px rgba(185,74,58,0.08);
+        border: 2px solid #ece6df;
+    }
+
+    /* Form styles for directions */
+    .directions-form {
+        background: linear-gradient(135deg, #fffaf6 0%, #f9f5f0 100%);
+        padding: 30px;
+        border-radius: 15px;
+        border-left: 4px solid #b94a3a;
+        box-shadow: 0 4px 20px rgba(185,74,58,0.08);
+        border: 1px solid #ece6df;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #6c2e22;
+        font-size: 1rem;
+    }
+    
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #ece6df;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background: #fffaf6;
+        color: #6c2e22;
+        font-weight: 500;
+    }
+    
+    .form-group input:focus, .form-group select:focus {
+        outline: none;
+        border-color: #b94a3a;
+        box-shadow: 0 0 0 3px rgba(185,74,58,0.08);
+        background: #fff;
+    }
+    
+    .get-directions-btn {
+        background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%);
+        color: white;
+        padding: 15px 24px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(185,74,58,0.25);
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .get-directions-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(185,74,58,0.35);
+        background: linear-gradient(135deg, #b45309 0%, #e2b07b 100%);
+    }
+
+    /* Nearby places buttons */
+    .directions-form a button {
+        background: linear-gradient(135deg, #b94a3a 0%, #b45309 100%) !important;
+        color: white !important;
+        border: none !important;
+        padding: 12px 24px !important;
+        border-radius: 10px !important;
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        margin: 8px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 12px rgba(185,74,58,0.15) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+
+    .directions-form a button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 16px rgba(185,74,58,0.25) !important;
+        background: linear-gradient(135deg, #b45309 0%, #e2b07b 100%) !important;
+    }
+
+    /* Enhanced header section */
+    .bg-light {
+        background: linear-gradient(135deg, #fffaf6 0%, #f5ede6 100%) !important;
+        padding: 30px 0;
+        border-bottom: 2px solid #ece6df;
+    }
+
+    .bg-light h2 {
+        color: #6c2e22;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .bg-light p {
+        color: #8c7c6b;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .site-card {
+            padding: 30px 20px;
+            margin: 15px;
+        }
+
+        .site-title {
+            font-size: 2rem;
+        }
+
+        .tab-navigation {
+            flex-direction: column;
+            padding: 5px;
+        }
+
+        .tab-btn {
+            width: 100%;
+            justify-content: center;
+            margin: 3px 0;
+            padding: 15px 20px;
+        }
+
+        .tab-content {
+            padding: 20px;
+        }
+
+        .tab-content h3 {
+            font-size: 1.4rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .directions-form {
+            padding: 20px;
+        }
+
+        .directions-form a button {
+            width: 100% !important;
+            margin: 5px 0 !important;
+        }
+
+        #map-container, #maps-container {
+            height: 300px;
+        }
+    }
+</style>
+
+<div class="bg-light ">
+    <div class="container-fluid px-4 py-3 ">
+        <div class="row mb-4">
+            <div class="col">
+                <a href="{% url 'sites' %}" class="back-link">
+                    <i class="fas fa-arrow-left me-2"></i>Back to All Sites
+                </a>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2 class=" fw-bold mb-2">{{site.name}}</h2>
+                <p class="location-text mb-0">
+                    <i class="fas fa-map-marker-alt me-2"></i>Bhaktapur, Nepal
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <form method="POST" action="{% url 'wishlist' site.id %}">
+                {% csrf_token %}
+                <button class="btn btn-outline-danger me-2">
+                    <i class="fas fa-heart me-2"></i>Save
+                </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-lg-8">
+                <div class="image-placeholder main-image w-100">
+                    <img src="{{site.photo1.url}}" alt="Main Image" class="img-fluid">
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="row g-3 h-100">
+                    <div class="col-12">
+                        <div class="image-placeholder side-image w-100">
+                            <img src="{{site.photo2.url}}" alt="Side Image 1" class="img-fluid">
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="image-placeholder side-image w-100 ">
+                            <img src="{{site.photo3.url}}" alt="Side Image 2" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="mx-5 my-4">{{ site.shortdescription }}</p>
+    </div>
+</div>
+
+<!-- Site Information Tabs Section -->
+<div class="site-detail-container">
+    <div class="container">
+        <div class="site-card">
+            <h1 class="site-title">{{ site.name }}</h1>
+            <div class="tab-navigation">
+                <button class="tab-btn active" onclick="openSiteTab('details')"><i class="fas fa-info-circle tab-icon"></i>Details</button>
+                <button class="tab-btn" onclick="openSiteTab('history')"><i class="fas fa-history tab-icon"></i>History</button>
+                <button class="tab-btn" onclick="openSiteTab('cultural_significance')"><i class="fas fa-star tab-icon"></i>Cultural Significance</button>
+            </div>
+
+            <div id="details" class="tab-content active-tab site-tab">
+                <h3>
+                    <span><i class="fas fa-info-circle tab-icon"></i>Site Details</span>
+                </h3>
+                <p>{{ data.description }}</p>
+            </div>
+
+            <div id="history" class="tab-content site-tab">
+                <h3>
+                    <span><i class="fas fa-history tab-icon"></i>Historical Background</span>
+                </h3>
+                <p>{{ data.history }}</p>
+            </div>
+
+            <div id="cultural_significance" class="tab-content site-tab">
+                <h3>
+                    <span><i class="fas fa-star tab-icon"></i>Cultural Significance</span>
+                </h3>
+                <p>{{ data.cultural_significance }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Maps and Directions Tabs Section -->
+<div class="site-detail-container">
+    <div class="container">
+        <div class="site-card">
+            <h1 class="site-title">Map & Directions</h1>
+            <div class="tab-navigation">
+                <button class="tab-btn active" onclick="openMapTab('maps')"><i class="fas fa-map tab-icon"></i>Map</button>
+                <button class="tab-btn" onclick="openMapTab('direction')"><i class="fas fa-route tab-icon"></i>Directions</button>
+                <button class="tab-btn" onclick="openMapTab('nearby')"><i class="fas fa-compass tab-icon"></i>Nearby Places</button>
+            </div>
+
+            <div id="maps" class="tab-content active-tab map-tab">
+                <h3>
+                    <span><i class="fas fa-map tab-icon"></i>Location Map</span>
+                </h3>
+                {% if has_location %}
+                    <div id="map-container"></div>
+                {% else %}
+                    <div class="text-center p-4">
+                        <p class="text-muted">Location information not available for this site.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div id="direction" class="tab-content map-tab">
+                <h3>
+                    <span><i class="fas fa-route tab-icon"></i>Get Directions</span>
+                </h3>
+                {% if has_location %}
+                    <div class="directions-form">
+                        <form method="POST" action="{% url 'get_directions' site.id %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="start-address">
+                                    <i class="fas fa-map-marker-alt me-2"></i>Starting Point:
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="start-address" 
+                                    name="start_address"
+                                    placeholder="Enter your starting address"
+                                    required
+                                />
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="travel-mode">
+                                    <i class="fas fa-car me-2"></i>Travel Mode:
+                                </label>
+                                <select id="travel-mode" name="travel_mode">
+                                    <option value="car">🚗 Car</option>
+                                    <option value="bike">🚲 Bike</option>
+                                    <option value="foot">🚶 Walking</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="get-directions-btn">
+                                <i class="fas fa-directions me-2"></i>Get Directions
+                            </button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="text-center p-4">
+                        <p class="text-muted">Location information not available for this site.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div id="nearby" class="tab-content map-tab">
+                <h3>
+                    <span><i class="fas fa-compass tab-icon"></i>Nearby Places</span>
+                </h3>
+                {% if has_location %}
+                    <div class="directions-form">
+                        <a href="{% url 'nearby_sites' site.id %}">
+                        <button style="background-color: #a84545; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer;">
+                             Nearby Sites </button></a>
+                        
+                        <a href="{% url 'nearby_restaurants' site.id %}">
+                        <button style="background-color: #a84545; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer;">
+                             Nearby Restaurants </button></a>
+
+                        <a href="{% url 'nearby_accommodations' site.id %}">
+                        <button style="background-color: #a84545; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer;">
+                             Nearby Accommodations </button></a>
+
+                        <a href="{% url 'nearby_transportations' site.id %}">
+                        <button style="background-color: #a84545; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer;">
+                             Nearby Transportations </button></a>
+
+                    </div>
+                {% else %}
+                    <div class="text-center p-4">
+                        <p class="text-muted">Location information not available for this site.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if has_location %}
+    {{ has_location|json_script:"location-data" }}
+    {{ map_style_url|json_script:"map-style-data" }}
+    {{ coordinates|json_script:"coordinates-data" }}
+{% endif %}
+
+<script>
+// Site information tabs functionality
+function openSiteTab(tabName) {
+    // Hide all site tab contents
+    const siteTabContents = document.getElementsByClassName('site-tab');
+    for (let i = 0; i < siteTabContents.length; i++) {
+        siteTabContents[i].classList.remove("active-tab");
+    }
+    
+    // Remove active class from all site tab buttons in the first section
+    const firstSiteCard = document.querySelectorAll('.site-detail-container')[0];
+    const siteTabButtons = firstSiteCard.querySelectorAll('.tab-btn');
+    for (let i = 0; i < siteTabButtons.length; i++) {
+        siteTabButtons[i].classList.remove("active");
+    }
+    
+    // Show selected tab content and activate button
+    document.getElementById(tabName).classList.add("active-tab");
+    event.currentTarget.classList.add("active");
+}
+
+// Maps and directions tabs functionality
+function openMapTab(tabName) {
+    // Hide all map tab contents
+    const mapTabContents = document.getElementsByClassName('map-tab');
+    for (let i = 0; i < mapTabContents.length; i++) {
+        mapTabContents[i].classList.remove("active-tab");
+    }
+    
+    // Remove active class from all map tab buttons in the second section
+    const secondSiteCard = document.querySelectorAll('.site-detail-container')[1];
+    const mapTabButtons = secondSiteCard.querySelectorAll('.tab-btn');
+    for (let i = 0; i < mapTabButtons.length; i++) {
+        mapTabButtons[i].classList.remove("active");
+    }
+    
+    // Show selected tab content and activate button
+    document.getElementById(tabName).classList.add("active-tab");
+    event.currentTarget.classList.add("active");
+}
+
+
+var hasLocation = JSON.parse(document.getElementById('location-data').textContent);
+var mapStyleUrl = JSON.parse(document.getElementById('map-style-data').textContent);
+var coordinates = JSON.parse(document.getElementById('coordinates-data').textContent);
+
+// Initialize main map
+var map = new mapboxgl.Map({
+    container: "map-container",
+    style: mapStyleUrl,
+    center: [coordinates.lon, coordinates.lat],
+    zoom: 14,
+    attributionControl: false
+});
+
+new mapboxgl.Marker()
+    .setLngLat([coordinates.lon, coordinates.lat])
+    .addTo(map);
+
+// Initialize nearby places map
+var map3 = new mapboxgl.Map({
+    container: "map-container-nearby",
+    style: mapStyleUrl,
+    center: [coordinates.lon, coordinates.lat],
+    zoom: 14,
+    attributionControl: false
+});
+
+new mapboxgl.Marker()
+    .setLngLat([coordinates.lon, coordinates.lat])
+    .addTo(map3);
+</script>
+{% endblock content %}

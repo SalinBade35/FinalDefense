@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load static %}
+
+{% block title %}
+  <title>Community - Share Your Adventures</title>
+{% endblock title %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/community.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+{% endblock extra_css %}
+
+{% block content %}
+
+<!-- Floating Sidebar Toggle Button -->
+<button class="sidebar-toggle" id="open-share-sidebar" aria-haspopup="dialog" aria-controls="share-sidebar">
+  <i class="fas fa-pen-fancy"></i>
+  <span class="sidebar-toggle-text">Share Adventure</span>
+</button>
+
+<!-- Overlay -->
+<div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+
+<!-- Slide-out Sidebar -->
+<aside class="share-sidebar" id="share-sidebar" role="dialog" aria-modal="true" aria-labelledby="share-sidebar-title" aria-hidden="true">
+  <div class="sidebar-header">
+    <h2 id="share-sidebar-title">Share Your Adventure</h2>
+    <button class="sidebar-close" id="close-share-sidebar" aria-label="Close share form">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="sidebar-body">
+    <div class="experience-form-container sidebar-form-container">
+      <div class="form-header">
+        <div class="form-icon">
+          <i class="fas fa-camera-retro"></i>
+        </div>
+        <p class="form-subtitle">Turn your memories into inspiring stories</p>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data" action="{% url 'community' %}" class="adventure-form" id="sidebar-adventure-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <div class="input-wrapper">
+            <i class="fas fa-pen-fancy input-icon"></i>
+            <input type="text" name="title" class="form-input" id="title" placeholder=" " required>
+            <label for="title" class="form-label">Adventure Title</label>
+            <div class="input-line"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="textarea-wrapper">
+            <i class="fas fa-scroll input-icon"></i>
+            <textarea name="content" class="form-textarea" id="content" placeholder=" " required></textarea>
+            <label for="content" class="form-label">Tell Your Story</label>
+            <div class="input-line"></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <div class="input-wrapper">
+              <i class="fas fa-calendar-alt input-icon"></i>
+              <input type="date" name="visit_date" class="form-input" id="visit_date">
+              <label for="visit_date" class="form-label">Adventure Date</label>
+              <div class="input-line"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-wrapper">
+              <i class="fas fa-map-marker-alt input-icon"></i>
+              <input type="text" name="location" class="form-input" id="location" placeholder=" ">
+              <label for="location" class="form-label">Location</label>
+              <div class="input-line"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="file-upload-wrapper">
+            <input type="file" name="images" class="file-input" id="file-upload" accept="image/*,video/*">
+            <label for="file-upload" class="file-label">
+              <div class="file-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+              </div>
+              <div class="file-text">
+                <span class="file-title">Upload Media</span>
+                <span class="file-subtitle">Click to select</span>
+              </div>
+            </label>
+            <div class="file-info">
+              <i class="fas fa-info-circle"></i>
+              Support: JPG, PNG, MP4 (Max 10MB)
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="select-wrapper">
+            <i class="fas fa-eye input-icon"></i>
+            <select name="status" class="form-select" id="visibility">
+              <option value="draft">📝 Save as Draft</option>
+              <option value="publish" selected>🌟 Share with Community</option>
+            </select>
+            <div class="select-arrow">
+              <i class="fas fa-chevron-down"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">
+            <span class="btn-text">Share Adventure</span>
+            <i class="fas fa-rocket btn-icon"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</aside>
+
+<!-- Enhanced Content Section -->
+<div class="container-fluid px-4 mt-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-10 col-xl-8">
+      
+      <!-- Adventures Feed Header -->
+      <div class="feed-header">
+        <div class="feed-title-wrapper">
+          <h3 class="feed-title">
+            <span class="title-icon">🌍</span>
+            Community Adventures
+          </h3>
+          <p class="feed-subtitle">Discover incredible journeys from fellow explorers</p>
+        </div>
+        <div class="feed-stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ experiences|length }}</span>
+            <span class="stat-label">Adventures</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Adventures Feed -->
+      <div class="adventures-feed">
+        {% for experience in experiences %}
+        <article class="adventure-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:100 }}">
+          <div class="card-gradient"></div>
+          
+          <!-- User Profile Header -->
+          <div class="user-profile">
+            <div class="user-info">
+              <div class="user-avatar">
+                <img src="https://ui-avatars.com/api/?name={{ experience.author.username }}&background=random&color=fff&size=50" 
+                     alt="{{ experience.author.username }}" class="avatar-img">
+                <div class="avatar-status"></div>
+              </div>
+              <div class="user-details">
+                <h6 class="username">{{ experience.author.username }}</h6>
+                <span class="post-time">
+                  <i class="fas fa-clock"></i>
+                  {{ experience.created_at|naturaltime }}
+                </span>
+              </div>
+            </div>
+            
+            {% if experience.verified %}
+            <div class="verified-badge">
+              <i class="fas fa-badge-check"></i>
+              <span>Verified</span>
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Adventure Content -->
+          <div class="adventure-content">
+            <h4 class="adventure-title">{{ experience.title }}</h4>
+            <div class="adventure-story">{{ experience.content|linebreaks }}</div>
+            
+            <!-- Media Display -->
+            {% if experience.images %}
+            <div class="media-showcase">
+              {% if ".mp4" in experience.images.url %}
+                <video controls class="adventure-video" poster="">
+                  <source src="{{ experience.images.url }}" type="video/mp4">
+                  Your browser does not support video playback.
+                </video>
+              {% else %}
+                <img src="{{ experience.images.url }}" 
+                     class="adventure-image"
+                     alt="Adventure from {{ experience.title }}"
+                     loading="lazy">
+              {% endif %}
+              <div class="media-overlay">
+                <button class="media-fullscreen">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+            </div>
+            {% endif %}
+
+            <!-- Source Reference -->
+            {% if experience.source %}
+            <div class="source-reference">
+              <div class="source-content">
+                <i class="fas fa-external-link-alt"></i>
+                <span>Referenced from:</span>
+                <a href="{{ experience.source }}" target="_blank" rel="noopener">
+                  {{ experience.source|truncatechars:50 }}
+                  <i class="fas fa-arrow-up-right-from-square"></i>
+                </a>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          
+        </article>
+        {% empty %}
+        
+        <!-- Empty State -->
+        <div class="empty-adventures">
+          <div class="empty-illustration">
+            <div class="empty-icon">
+              <i class="fas fa-mountain"></i>
+            </div>
+            <div class="empty-stars">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+          </div>
+          <h4 class="empty-title">No Adventures Yet</h4>
+          <p class="empty-message">Be the first explorer to share your incredible journey with our community!</p>
+          <button class="empty-cta" onclick="document.getElementById('open-share-sidebar').click()">
+            <i class="fas fa-plus"></i>
+            Share Your Adventure
+          </button>
+        </div>
+        
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar JavaScript -->
+<script>
+  (function() {
+    const openBtn = document.getElementById('open-share-sidebar');
+    const closeBtn = document.getElementById('close-share-sidebar');
+    const sidebar = document.getElementById('share-sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    
+    function openSidebar() {
+      sidebar.classList.add('open');
+      overlay.classList.add('visible');
+      sidebar.setAttribute('aria-hidden', 'false');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      
+      // Focus first input
+      const firstInput = sidebar.querySelector('input[type="text"]');
+      if (firstInput) {
+        setTimeout(() => firstInput.focus(), 300);
+      }
+    }
+    
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('visible');
+      sidebar.setAttribute('aria-hidden', 'true');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      openBtn.focus();
+    }
+    
+    openBtn.addEventListener('click', openSidebar);
+    closeBtn.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+    
+    // Escape key to close
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+        closeSidebar();
+      }
+    });
+  })();
+</script>
+
+{% endblock content %}

@@ -1,0 +1,335 @@
+/* ========================================
+   HOMEPAGE SPECIFIC STYLES
+   ======================================== */
+
+/* Global Styles for Homepage */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f3e9;
+  color: #333;
+}
+
+.section-title {
+  margin-bottom: 2rem;
+  font-weight: 700;
+  color: #3a2618;
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  height: 65vh;
+  background-image: url("/media/img/bhaktapur.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  color: #fff;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  margin-left: 3rem;
+  margin-bottom: 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+}
+
+.hero-content p {
+  font-family: 'Dancing Script', cursive;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.custom-btn {
+  background: linear-gradient(90deg, #dae4a1 0%, #e8cba8 100%);
+  color: #38200e;
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 50px;
+  box-shadow: 0 2px 10px rgba(168, 60, 50, 0.08);
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background 0.4s, color 0.3s, box-shadow 0.3s, transform 0.2s, letter-spacing 0.3s;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-btn::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(168, 60, 50, 0.15);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s, height 0.4s;
+  z-index: 0;
+}
+
+.custom-btn:hover {
+  background: linear-gradient(90deg, #d4b28e 0%, #e8cba8 100%);
+  color: #a83c32;
+  box-shadow: 0 6px 24px rgba(168, 60, 50, 0.18);
+  transform: translateY(-3px) scale(1.04);
+  letter-spacing: 2px;
+}
+
+.custom-btn:hover::after {
+  width: 250px;
+  height: 250px;
+}
+
+/* Discover Section */
+.discover-section {
+  padding: 4rem 0;
+}
+
+.category-card {
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.card-image {
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+}
+
+.historical-bg {
+  background-image: url("/media/img/bouddha.png");
+  position: relative;
+}
+
+.cultural-bg {
+  background-image: url("/media/img/jatra.png");
+  position: relative;
+}
+
+.cuisine-bg {
+  background-image: url("/media/img/food.png");
+  position: relative;
+}
+
+.blogs-bg {
+  background-image: url("/media/img/blogs.png");
+  position: relative;
+}
+
+.card-content {
+  padding: 1.5rem;
+}
+
+.card-content h3 {
+  color: #3a2618;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.card-link {
+  color: #a83c32;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0.75rem;
+  transition: color 0.3s ease;
+}
+
+.card-link:hover {
+  color: #7d2d26;
+}
+
+/* Heritage Section */
+.heritage-section {
+  padding: 4rem 0;
+  background-color: #fff;
+}
+
+.heritage-content {
+  padding-right: 2rem;
+}
+
+.heritage-content h2 {
+  color: #3a2618;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.heritage-content p {
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.feature-list {
+  list-style: none;
+  margin-bottom: 2rem;
+}
+
+.feature-list li {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.feature-list i {
+  color: #a83c32;
+  font-size: 1.25rem;
+}
+
+.visit-btn {
+  background-color: #a83c32;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.visit-btn:hover {
+  background-color: #7d2d26;
+  color: #fff;
+}
+
+/* Events Section */
+.events-section {
+  padding: 4rem 0;
+}
+
+.view-all {
+  color: #a83c32;
+  text-decoration: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s ease;
+}
+
+.view-all:hover {
+  color: #7d2d26;
+}
+
+.event-card {
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.event-image {
+  height: 160px;
+  background-image: url("/media/img/jatra.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.event-date {
+  background-color: #a83c32;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.event-details {
+  padding: 1.5rem;
+}
+
+.event-details h3 {
+  color: #3a2618;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.learn-more-btn {
+  border: 1px solid #a83c32;
+  color: #a83c32;
+  background-color: transparent;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.learn-more-btn:hover {
+  background-color: #a83c32;
+  color: #fff;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .heritage-content {
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+  }
+}
