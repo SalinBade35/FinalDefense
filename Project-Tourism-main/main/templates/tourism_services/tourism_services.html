@@ -1,4 +1,3 @@
-
 {% extends "base.html" %} {% load static %} {% block content %}
 <style>
   body {
@@ -226,6 +225,9 @@
     overflow: hidden;
     margin-bottom: 20px;
     position: relative;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .card::before {
@@ -246,10 +248,13 @@
   }
 
   .card-img-top {
-    height: 200px;
+    width: 100%;
+    height: 220px;
     object-fit: cover;
+    object-position: center;
     transition: transform 0.3s ease;
     border-radius: 18px 18px 0 0;
+    display: block;
   }
 
   .card:hover .card-img-top {
@@ -304,9 +309,10 @@
   /* Grid Layout Enhancement */
   .rows {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 320px));
+    gap: 30px;
     margin: 0;
+    justify-content: center;
   }
 
   .col-md-4,
@@ -321,6 +327,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    max-width: 100%;
   }
 
   .guidance-tips .card-body {
@@ -340,6 +347,10 @@
   .guidance-tips .card-title i {
     color: #b94a3a;
     font-size: 1.5rem;
+  }
+
+  .guidance-tips .rows {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
 
   @keyframes fadeIn {
@@ -362,6 +373,11 @@
     .site-card {
       padding: 40px;
       margin: 15px;
+    }
+
+    .rows {
+      grid-template-columns: repeat(auto-fit, minmax(260px, 300px));
+      gap: 25px;
     }
   }
 
@@ -397,12 +413,13 @@
     }
 
     .rows {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 280px));
       gap: 20px;
     }
 
     .card {
       margin-bottom: 15px;
+      max-width: 100%;
     }
   }
 
@@ -431,6 +448,19 @@
 
     .tab-content {
       padding: 15px;
+    }
+
+    .rows {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      max-width: 100%;
+    }
+
+    .card-img-top {
+      height: 200px;
     }
 
     .card-body {
