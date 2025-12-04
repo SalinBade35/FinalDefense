@@ -9,49 +9,86 @@
 {% endblock %} 
 
 {% block content %}
+<style>
+  .ticket-indicator.free-indicator {
+  font-size: 1.1rem; /* Slightly larger */
+  font-weight: 600;  /* Make text bold */
+  padding: 6px 12px; /* Add space around text */
+  background-color: #ffcc00; /* Highlight color */
+  color: #000; /* Text color */
+  border-radius: 8px; /* Rounded corners */
+  display: inline-flex; /* Align icon and text nicely */
+  align-items: center;
+  gap: 6px; /* Space between icon and text */
+}
+
+.ticket-indicator.free-indicator i {
+  font-size: 1.2rem; /* Slightly bigger icon */
+}
+
+
+  .date-range .dates {
+  display: inline-block;
+  line-height: 1.4; /* Adjust space between lines */
+  white-space: normal; /* Allow line breaks */
+}
+.event-meta {
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap instead of overflowing */
+  gap: 15px; /* Space between location, date, ticket */
+  align-items: center;
+}
+
+</style>
 
 <main class="main-content">
   <!-- Hero Section -->
-  <section class="hero-section">
-    <div class="hero-container">
-      <div class="hero-info">
-        <span class="event-type">{{ event.get_event_type_display }}</span>
-        <h1 class="event-title">{{ event.title }}</h1>
-        <div class="event-meta">
-          <a href ="{% url 'event_map' event.id %}"> <span class="location">
+<section class="hero-section">
+  <div class="hero-container">
+    <div class="hero-info">
+      <span class="event-type">{{ event.get_event_type_display }}</span>
+      <h1 class="event-title">{{ event.title }}</h1>
+      <div class="event-meta">
+        <a href="{% url 'event_map' event.id %}">
+          <span class="location">
             <i class="fas fa-map-marker-alt"></i>
             {{ event.location }}
           </span>
-          </a>
-          <span class="date-range">
-            <i class="fas fa-calendar-alt"></i>
-            {{ event.start_date|date:"M d, Y" }} - {{ event.end_date|date:"M d, Y" }}
+        </a>
+        <span class="date-range">
+          <i class="fas fa-calendar-alt"></i>
+          <span class="dates">
+            {{ event.start_date|date:"M d, Y" }}<br>
+            {{ event.end_date|date:"M d, Y" }}
           </span>
-          <!-- Add ticket indicator in hero -->
-          {% if event.ticket %}
-            <span class="ticket-indicator">
-              <i class="fas fa-ticket-alt"></i>
-              {% if event.ticket_price %}
-                NPR {{ event.ticket_price }}
-              {% else %}
-                Ticketed Event
-              {% endif %}
-            </span>
-          {% else %}
-            <span class="ticket-indicator free-indicator">
-              <i class="fas fa-gift"></i>
-              Free Entry
-            </span>
-          {% endif %}
-        </div>
-      </div>
-      <div class="hero-image">
-        {% if event.image %}
-          <img src="{{ event.image.url }}" alt="{{ event.title }}" id="main-image" />
+        </span>
+        <!-- Ticket indicator -->
+        {% if event.ticket %}
+          <span class="ticket-indicator">
+            <i class="fas fa-ticket-alt"></i>
+            {% if event.ticket_price %}
+              NPR {{ event.ticket_price }}
+            {% else %}
+              Ticketed Event
+            {% endif %}
+          </span>
+        {% else %}
+          <span class="ticket-indicator free-indicator">
+            <i class="fas fa-gift"></i>
+            Free Entry
+          </span>
+
         {% endif %}
       </div>
     </div>
-  </section>
+    <div class="hero-image">
+      {% if event.image %}
+        <img src="{{ event.image.url }}" alt="{{ event.title }}" id="main-image" />
+      {% endif %}
+    </div>
+  </div>
+</section>
+
 
   <div class="container">
     <div class="content-grid">
