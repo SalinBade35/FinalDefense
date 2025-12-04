@@ -553,7 +553,7 @@ def paymentsuccess(request,order_id):
     User=request.user
     subject="Thankyou for buying!!"
     message=render_to_string('payment/success.html',{'Order':order})
-    from_email="salinbade1994@gmail.com"
+    from_email="cpatp56@gmail.com"
     recipient_list=[User.email]
     msg_email=EmailMessage(subject,message,from_email,recipient_list)
     msg_email.send(fail_silently=True)
