@@ -414,16 +414,12 @@
               </div>
 
               <div class="social-login">
-                <button class="btn btn-outline-secondary social-btn">
-                  <img
-                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
-                    alt="Google"
-                    width="20"
-                    height="20"
-                  />
-                  Google
-                </button>
-              </div>
+                    <a class="btn btn-outline-secondary social-btn" href="{% url 'social:begin' 'google-oauth2' %}">
+                      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google">
+                      Google
+                  </a>
+                  </div>
+
 
               <!-- Sign Up Link -->
               <div class="signup-link text-center">
